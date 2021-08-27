@@ -1,6 +1,8 @@
 package com.playtika.gamesettingsapi.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.exceptions.MyCustomException;
+import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -38,6 +41,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private GameSessionService gameSessionService;
 
     //required by the UserDetailsService
     @Override
@@ -97,6 +103,11 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public GameSession addGameSession(User user ,GameSession gameSession) throws ExecutionException, JsonProcessingException, InterruptedException {
+        gameSession.setUser(user);
+        gameSessionService.createGameSession(gameSession);
+        return gameSession;
+    }
 
     public void removeUser(String userName) {
         if(!userRepository.existsByUsername(userName)){
@@ -115,6 +126,10 @@ public class UserService implements UserDetailsService {
         UserDTO userResponse = new UserDTO(user.getUsername(), user.getEmail());
 
         return userResponse;
+    }
+
+    public User getUser(String userName){
+        return userRepository.findByUsername(userName);
     }
 
     public List<User> getAllUser() {

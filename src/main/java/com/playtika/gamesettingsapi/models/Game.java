@@ -12,7 +12,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "game_name")
+    @Column(name = "game_name",unique = true)
     private String name;
 
     @OneToMany(
@@ -21,6 +21,14 @@ public class Game {
             orphanRemoval = true
     )
     private List<GameSession> gameSessions;
+
+    public Game(String name) {
+        this.name = name;
+    }
+
+    public Game(){
+
+    }
 
     public List<GameSession> getUsers() {
         return gameSessions;

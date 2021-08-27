@@ -10,4 +10,8 @@ VALUES ('vladimir@yahoo.com', 'vladimir', 'popescu', 180, 'MTIzMw==','vladirares
        ('maria@yahoo.com', 'maria', 'ioana', 0, 'dGVzdDEyMw==','mariadb');
 
 
-
+# INSERT INTO roles(name)
+#
+# VALUES ('ROLE_ADMIN'),
+#        ('ROLE_MANAGER'),
+#        ('ROLE_USER')

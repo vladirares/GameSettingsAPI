@@ -14,6 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @ComponentScan("com.playtika.gamesettingsapi")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -56,8 +58,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/login")//
-                .antMatchers("/register")//
+                .antMatchers(POST,"/api/login")//
+                .antMatchers(POST,"/api/register")//
                 .antMatchers("/api/public/**")//
                 .and()
                 .ignoring()

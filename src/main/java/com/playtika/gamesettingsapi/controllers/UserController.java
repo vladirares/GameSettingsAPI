@@ -1,32 +1,48 @@
 package com.playtika.gamesettingsapi.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.playtika.gamesettingsapi.dto.GameSessionDTO;
+import com.playtika.gamesettingsapi.models.Game;
+import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
+import com.playtika.gamesettingsapi.repositories.GameRepository;
 import com.playtika.gamesettingsapi.security.dto.LoginRequest;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
 import com.playtika.gamesettingsapi.security.dto.UserDTO;
+import com.playtika.gamesettingsapi.services.GameService;
+import com.playtika.gamesettingsapi.services.GameSessionService;
 import com.playtika.gamesettingsapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.Authenticator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     UserService userService;
 
+    @Autowired
+    GameSessionService gameSessionService;
+
+    @Autowired
+    GameService gameService;
+
+
     @GetMapping
     @RequestMapping("/login")
-    public String login(){
+    public String login() {
         return "Login page";
     }
 
@@ -34,9 +50,9 @@ public class UserController {
     public ResponseEntity<LoginResponse> login(HttpServletRequest requestHeader, @RequestBody LoginRequest request) throws RuntimeException {
 
         LoginResponse loginResponse = userService.login(request.getUserName(), request.getPassword());
-        if(loginResponse == null){
+        if (loginResponse == null) {
             throw new RuntimeException("Login failed. Possible cause : incorrect username/password");
-        }else{
+        } else {
             return new ResponseEntity<>(loginResponse, HttpStatus.OK);
         }
     }
@@ -51,6 +67,28 @@ public class UserController {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    @PostMapping(value = "/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth) throws RuntimeException, ExecutionException, JsonProcessingException, InterruptedException {
+        String username = auth.getName();
+        User user = userService.getUser(username);
+        Game game = gameService.createGame(new Game(gameSessionDTO.getGameName()));
+        GameSession gameSession = new GameSession();
+        if (user != null){
+            System.out.println("e ok");
+            gameSession.setUser(user);
+            gameSession.setGame(game);
+            gameSession.setDuration(gameSessionDTO.getDuration());
+            gameSession.setStartTime(gameSessionDTO.getStartTime());
+            try {
+                return new ResponseEntity<>(gameSessionService.createGameSession(gameSession),HttpStatus.OK);
+            } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
+                return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping(value = "/delete")

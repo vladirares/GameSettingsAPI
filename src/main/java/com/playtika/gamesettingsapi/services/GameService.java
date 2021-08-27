@@ -66,9 +66,9 @@ public class GameService {
     }
 
     public Game createGame(Game game) throws JsonProcessingException, ExecutionException, InterruptedException {
-        List<Game> gamesWithName = gameRepository.findGameByName(game.getName());
-        if(gamesWithName.size()>0){
-            return gamesWithName.get(0);
+        Game gamesWithName = gameRepository.findGameByName(game.getName());
+        if(gamesWithName != null){
+            return gamesWithName;
         }
         if(findGame(game.getName()).get()){
             return gameRepository.saveAndFlush(game);
@@ -76,7 +76,7 @@ public class GameService {
         return null;
     }
 
-    public boolean updateUser(Game game) {
+    public boolean updateGame(Game game) {
         Optional<Game> existingGame = gameRepository.findById(game.getId());
         if (existingGame.isPresent()) {
             gameRepository.saveAndFlush(game);
