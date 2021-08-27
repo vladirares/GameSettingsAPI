@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLException;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Service
@@ -29,12 +30,13 @@ public class GameService {
     private static SslContext sslContext;
     HttpClient httpClient;
     WebClient webClient;
+    private static String API_KEY;
 
     @Autowired
     GameRepository gameRepository;
 
     @PostConstruct
-    public void init() throws SSLException {
+    public void init() throws SSLException, FileNotFoundException {
         sslContext = SslContextBuilder
                 .forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -43,6 +45,7 @@ public class GameService {
         webClient = WebClient.builder()
                 .baseUrl(URI)
                 .clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+        API_KEY = getApiSecret();
     }
 
     public List<Game> findAll() {
@@ -62,8 +65,15 @@ public class GameService {
         return false;
     }
 
-    public Game createGame(Game game) {
-        return gameRepository.saveAndFlush(game);
+    public Game createGame(Game game) throws JsonProcessingException, ExecutionException, InterruptedException {
+        List<Game> gamesWithName = gameRepository.findGameByName(game.getName());
+        if(gamesWithName.size()>0){
+            return gamesWithName.get(0);
+        }
+        if(findGame(game.getName()).get()){
+            return gameRepository.saveAndFlush(game);
+        }
+        return null;
     }
 
     public boolean updateUser(Game game) {
@@ -76,9 +86,13 @@ public class GameService {
     }
 
     @Async
-    public Future<String> findGame(String gameName) throws SSLException, JsonProcessingException {
+    public Future<Boolean> findGame(String gameName) throws JsonProcessingException{
 
-        String params = "/games?key=c6a7575e5863480e9611482b5f7e8c48&page=1&page_size=1&search=" + gameName + "&search_exact=true";
+        String params = "/games?key=" +
+                API_KEY +
+                "&page=1&page_size=1&search=" +
+                gameName +
+                "&search_exact=true";
 
         String response = webClient.get()
                 .uri(params)
@@ -86,13 +100,17 @@ public class GameService {
                 .bodyToMono(String.class)
                 .block();
 
+        int count = getGameCount(response);
+        boolean result = count > 0;
+
+        return new AsyncResult<>(result);
+
+    }
+
+    private int getGameCount(String response) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(response);
-        int count = jsonNode.get("count").asInt();
-        Boolean result = count > 0;
-
-        return new AsyncResult<String>(result.toString());
-
+        return  jsonNode.get("count").asInt();
     }
 
     private String getApiSecret() throws FileNotFoundException {

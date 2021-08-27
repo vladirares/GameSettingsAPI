@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.net.ssl.SSLException;
+import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -19,9 +20,11 @@ public class GameController {
     @Autowired
     GameService gameService;
 
+    //todo to delete is only for testing
     @GetMapping
     @RequestMapping("/{gameName}")
-    public String getGame(@PathVariable String gameName) throws ExecutionException, InterruptedException, SSLException, JsonProcessingException {
-        return gameService.findGame(gameName).get();
+    public String getGame(@PathVariable String gameName) throws ExecutionException, InterruptedException, SSLException, JsonProcessingException, FileNotFoundException {
+        return gameService.findGame(gameName).get().toString();
     }
+
 }
