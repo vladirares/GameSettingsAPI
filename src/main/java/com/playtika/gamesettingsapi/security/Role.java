@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.security.models;
+package com.playtika.gamesettingsapi.security;
 
 import com.playtika.gamesettingsapi.models.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,13 +11,13 @@ import java.util.List;
 public class Role implements GrantedAuthority {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @OneToMany(mappedBy = "role")
     private List<User> users;
 
     public Role() {
