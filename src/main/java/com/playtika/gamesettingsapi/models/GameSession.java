@@ -1,6 +1,8 @@
 package com.playtika.gamesettingsapi.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -9,15 +11,18 @@ import java.util.Objects;
 @Table(name = "game_sessions")
 public class GameSession {
 
-    @EmbeddedId
-    private GameSessionId id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @MapsId("userId")
+    @JsonIgnore
+    @ManyToOne()
+    @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @MapsId("gameId")
+    @ManyToOne()
+    @JoinColumn(name="game_id")
     private Game game;
 
     @Column(name = "game_session_start_time")
@@ -29,14 +34,6 @@ public class GameSession {
 
     @Column(name = "game_session_is_time_exceeded")
     private boolean isTimeExceeded;
-
-    public GameSessionId getId() {
-        return id;
-    }
-
-    public void setId(GameSessionId id) {
-        this.id = id;
-    }
 
     public User getUser() {
         return user;

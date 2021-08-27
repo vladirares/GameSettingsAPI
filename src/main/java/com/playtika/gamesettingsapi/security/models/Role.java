@@ -1,5 +1,6 @@
 package com.playtika.gamesettingsapi.security.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.playtika.gamesettingsapi.models.User;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -17,6 +18,7 @@ public class Role implements GrantedAuthority {
 
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
