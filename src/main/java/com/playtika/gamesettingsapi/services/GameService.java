@@ -65,13 +65,13 @@ public class GameService {
         return false;
     }
 
-    public Game createGame(Game game) throws JsonProcessingException, ExecutionException, InterruptedException {
-        Game gamesWithName = gameRepository.findGameByName(game.getName());
+    public Game createGame(String name) throws JsonProcessingException, ExecutionException, InterruptedException {
+        Game gamesWithName = gameRepository.findGameByName(name);
         if(gamesWithName != null){
             return gamesWithName;
         }
-        if(findGame(game.getName()).get()){
-            return gameRepository.saveAndFlush(game);
+        if(findGame(name).get()){
+            return gameRepository.saveAndFlush(new Game(name));
         }
         return null;
     }

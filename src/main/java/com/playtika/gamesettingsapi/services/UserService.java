@@ -103,11 +103,11 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public GameSession addGameSession(User user ,GameSession gameSession) throws ExecutionException, JsonProcessingException, InterruptedException {
-        gameSession.setUser(user);
-        gameSessionService.createGameSession(gameSession);
-        return gameSession;
-    }
+//    public GameSession addGameSession(User user ,GameSession gameSession) throws ExecutionException, JsonProcessingException, InterruptedException {
+//        gameSession.setUser(user);
+//        gameSessionService.createGameSession(gameSession);
+//        return gameSession;
+//    }
 
     public void removeUser(String userName) {
         if(!userRepository.existsByUsername(userName)){

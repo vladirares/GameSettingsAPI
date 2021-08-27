@@ -13,6 +13,15 @@ public class GameSessionId implements Serializable {
     @Column(name = "game_id")
     private long gameId;
 
+    public GameSessionId(long userId, long gameId) {
+        this.userId = userId;
+        this.gameId = gameId;
+    }
+
+    public GameSessionId(){
+
+    }
+
     public long getUserId() {
         return userId;
     }

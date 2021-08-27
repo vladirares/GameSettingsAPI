@@ -30,6 +30,16 @@ public class Game {
 
     }
 
+
+
+    public List<GameSession> getGameSessions() {
+        return gameSessions;
+    }
+
+    public void setGameSessions(List<GameSession> gameSessions) {
+        this.gameSessions = gameSessions;
+    }
+
     public List<GameSession> getUsers() {
         return gameSessions;
     }

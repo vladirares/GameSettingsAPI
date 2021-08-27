@@ -71,24 +71,19 @@ public class UserController {
 
     @PostMapping(value = "/create")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth) throws RuntimeException, ExecutionException, JsonProcessingException, InterruptedException {
-        String username = auth.getName();
-        User user = userService.getUser(username);
-        Game game = gameService.createGame(new Game(gameSessionDTO.getGameName()));
-        GameSession gameSession = new GameSession();
-        if (user != null){
-            System.out.println("e ok");
-            gameSession.setUser(user);
-            gameSession.setGame(game);
-            gameSession.setDuration(gameSessionDTO.getDuration());
-            gameSession.setStartTime(gameSessionDTO.getStartTime());
-            try {
-                return new ResponseEntity<>(gameSessionService.createGameSession(gameSession),HttpStatus.OK);
-            } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
-                return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth){
+        try {
+            GameSessionDTO gameSessionDTO1 = new GameSessionDTO();
+            gameSessionDTO1.setUserName(auth.getName());
+            gameSessionDTO1.setGameName(gameSessionDTO.getGameName());
+            gameSessionDTO1.setDuration(gameSessionDTO.getDuration());
+            gameSessionDTO1.setStartTime(gameSessionDTO.getStartTime());
+            GameSession gameSession = gameSessionService.createGameSession(gameSessionDTO1);
+            return new ResponseEntity<>(gameSession,HttpStatus.OK);
+        } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
+            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     @DeleteMapping(value = "/delete")

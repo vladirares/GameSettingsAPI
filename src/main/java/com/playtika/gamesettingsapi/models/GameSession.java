@@ -12,11 +12,11 @@ public class GameSession {
     @EmbeddedId
     private GameSessionId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @MapsId("userId")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @MapsId("gameId")
     private Game game;
 
@@ -78,20 +78,21 @@ public class GameSession {
         isTimeExceeded = timeExceeded;
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(user,game);
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null || getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        GameSession that = (GameSession) obj;
-//        return Objects.e
-//    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(user.getUsername(),game.getName());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        GameSession that = (GameSession) obj;
+        return that.getGame().getName().equals(getGame().getName()) &&
+                that.getUser().getUsername().equals(getUser().getUsername());
+    }
 }

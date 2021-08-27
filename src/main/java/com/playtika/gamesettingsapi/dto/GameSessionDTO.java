@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class GameSessionDTO {
     private String gameName;
+    private String userName;
     private int duration;
     private boolean isTimeExceeded;
     private Date startTime;
@@ -17,6 +18,14 @@ public class GameSessionDTO {
 
     public GameSessionDTO(){
 
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getGameName() {
