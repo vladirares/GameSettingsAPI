@@ -21,6 +21,7 @@ public class GameSession {
     private Game game;
 
     @Column(name = "game_session_start_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startTime = new Date();
 
     @Column(name = "game_session_duration")
