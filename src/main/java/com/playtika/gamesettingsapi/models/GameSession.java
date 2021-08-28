@@ -16,7 +16,6 @@ public class GameSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name="user_id")
     private User user;
@@ -34,6 +33,14 @@ public class GameSession {
 
     @Column(name = "game_session_is_time_exceeded")
     private boolean isTimeExceeded;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public User getUser() {
         return user;
@@ -77,7 +84,7 @@ public class GameSession {
 
     @Override
     public int hashCode() {
-        return Objects.hash(user.getUsername(),game.getName());
+        return Objects.hash(game.getId());
     }
 
     @Override
@@ -89,7 +96,7 @@ public class GameSession {
             return false;
         }
         GameSession that = (GameSession) obj;
-        return that.getGame().getName().equals(getGame().getName()) &&
-                that.getUser().getUsername().equals(getUser().getUsername());
+        return that.getId() == getId();
     }
+
 }

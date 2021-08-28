@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.services.servicefactory;
+package com.playtika.gamesettingsapi.services.servicerolefactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
@@ -12,7 +12,9 @@ import java.util.concurrent.ExecutionException;
 @Service
 public interface RoleService {
 
+    GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException;
     GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException;
     List<GameSession> getGameSessions(User user);
+    boolean deleteGameSession(GameSessionDTO gameSessionDTO);
 
 }

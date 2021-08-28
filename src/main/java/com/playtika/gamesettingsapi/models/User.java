@@ -1,5 +1,6 @@
 package com.playtika.gamesettingsapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.playtika.gamesettingsapi.security.models.Role;
 
 import javax.persistence.*;
@@ -35,6 +36,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
@@ -42,6 +44,7 @@ public class User {
     )
     private List<GameSession> gameSessions;
 
+    @JsonIgnore
     private String password;
 
     public String getPassword() {

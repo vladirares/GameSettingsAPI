@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
 import com.playtika.gamesettingsapi.models.Game;
 import com.playtika.gamesettingsapi.models.GameSession;
-import com.playtika.gamesettingsapi.models.GameSessionId;
 import com.playtika.gamesettingsapi.models.User;
-import com.playtika.gamesettingsapi.repositories.GameRepository;
 import com.playtika.gamesettingsapi.repositories.GameSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,14 +35,31 @@ public class GameSessionService {
     public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         GameSession gameSession = gameSessionRepository.getById(gameSessionDTO.getId());
         Game game = gameService.createGame(gameSessionDTO.getGameName());
-        if(game!= null){
+        if (game != null) {
             gameSession.setGame(game);
-        }else{
+        } else {
             throw new IllegalArgumentException();
         }
+        gameSession.setUser(userService.getUser(gameSessionDTO.getUserName()));
         gameSession.setDuration(gameSessionDTO.getDuration());
         gameSession.setStartTime(gameSessionDTO.getStartTime());
         return gameSessionRepository.saveAndFlush(gameSession);
+    }
+
+    public GameSession getGameSession(long id) {
+        return gameSessionRepository.findById(id).get();
+    }
+
+    public boolean deleteGameSession(long id) {
+        if(gameSessionRepository.findById(id).isPresent()){
+            GameSession gameSession = gameSessionRepository.findById(id).get();
+            gameSession.getUser().getGameSessions().remove(gameSession);
+            gameSession.getGame().getGameSessions().remove(gameSession);
+            gameSessionRepository.deleteById(id);
+//            gameSessionRepository.flush();
+            return true;
+        }
+        return false;
     }
 
 }

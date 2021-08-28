@@ -1,12 +1,7 @@
 package com.playtika.gamesettingsapi.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.playtika.gamesettingsapi.dto.GameSessionDTO;
 import com.playtika.gamesettingsapi.exceptions.MyCustomException;
-import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
-import com.playtika.gamesettingsapi.repositories.GameRepository;
-import com.playtika.gamesettingsapi.repositories.GameSessionRepository;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
@@ -14,12 +9,10 @@ import com.playtika.gamesettingsapi.security.dto.UserDTO;
 import com.playtika.gamesettingsapi.security.models.RoleType;
 import com.playtika.gamesettingsapi.security.repositories.RoleRepository;
 import com.playtika.gamesettingsapi.security.services.JwtTokenService;
-import com.playtika.gamesettingsapi.services.servicefactory.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -28,16 +21,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Service
-public class UserService implements UserDetailsService, RoleService {
+public class UserService implements UserDetailsService {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -118,12 +107,6 @@ public class UserService implements UserDetailsService, RoleService {
         return user;
     }
 
-//    public GameSession addGameSession(User user ,GameSession gameSession) throws ExecutionException, JsonProcessingException, InterruptedException {
-//        gameSession.setUser(user);
-//        gameSessionService.createGameSession(gameSession);
-//        return gameSession;
-//    }
-
     public void removeUser(String userName) {
         if(!userRepository.existsByUsername(userName)){
             throw new RuntimeException("User doesn't exists");
@@ -153,16 +136,6 @@ public class UserService implements UserDetailsService, RoleService {
 
     public String refreshToken(String userName) {
         return jwtTokenService.createToken(userName, userRepository.findByUsername(userName).getRoles());
-    }
-
-    @Override
-    public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
-        return gameSessionService.updateGameSession(gameSessionDTO);
-    }
-
-    @Override
-    public List<GameSession> getGameSessions(User user) {
-        return user.getGameSessions();
     }
 
 

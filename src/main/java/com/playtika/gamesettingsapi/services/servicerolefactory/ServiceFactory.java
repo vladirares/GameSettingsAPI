@@ -1,11 +1,9 @@
-package com.playtika.gamesettingsapi.services.servicefactory;
+package com.playtika.gamesettingsapi.services.servicerolefactory;
 
 import com.playtika.gamesettingsapi.security.models.Role;
-import com.playtika.gamesettingsapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +16,7 @@ public class ServiceFactory {
     @Autowired
     ManagerService managerService;
     @Autowired
-    UserService userService;
+    RegularUserService regularUserService;
 
     public RoleService createService(List<Role> roles) {
         List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
@@ -29,7 +27,7 @@ public class ServiceFactory {
             return managerService;
         }
         if(roleNames.contains("ROLE_USER")){
-            return userService;
+            return regularUserService;
         }
         return null;
     }

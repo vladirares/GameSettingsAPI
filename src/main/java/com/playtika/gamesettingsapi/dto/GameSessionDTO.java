@@ -1,5 +1,7 @@
 package com.playtika.gamesettingsapi.dto;
 
+import com.playtika.gamesettingsapi.models.User;
+
 import java.util.Date;
 
 public class GameSessionDTO {
@@ -9,16 +11,28 @@ public class GameSessionDTO {
     private boolean isTimeExceeded;
     private Date startTime;
     private long id;
+    private User user;
 
-    public GameSessionDTO(String gameName, int duration, boolean isTimeExceeded, Date startTime) {
+    public GameSessionDTO(String gameName, String userName, int duration, boolean isTimeExceeded, Date startTime, long id, User user) {
         this.gameName = gameName;
+        this.userName = userName;
         this.duration = duration;
         this.isTimeExceeded = isTimeExceeded;
         this.startTime = startTime;
+        this.id = id;
+        this.user = user;
     }
 
     public GameSessionDTO(){
 
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public long getId() {
