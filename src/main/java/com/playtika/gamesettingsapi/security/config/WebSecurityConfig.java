@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder encoder(){
+    public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder(11);
     }
 
@@ -58,12 +58,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers(POST,"/api/login")//
-                .antMatchers(POST,"/api/register")//
+                .antMatchers(POST, "/api/login")//
+                .antMatchers(POST, "/api/register")//
+                .antMatchers("/spring-security-rest/api/v2/api-docs")//--
+                .antMatchers("/api/v2/api-docs")//--
                 .antMatchers("/api/public/**")//
                 .and()
                 .ignoring()
-                .antMatchers("/api/players/public");;
+                .antMatchers("/api/players/public");
+        ;
     }
 
 }

@@ -3,10 +3,8 @@ package com.playtika.gamesettingsapi.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
-import com.playtika.gamesettingsapi.models.Game;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
-import com.playtika.gamesettingsapi.repositories.GameRepository;
 import com.playtika.gamesettingsapi.security.dto.LoginRequest;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
@@ -14,6 +12,7 @@ import com.playtika.gamesettingsapi.security.dto.UserDTO;
 import com.playtika.gamesettingsapi.services.GameService;
 import com.playtika.gamesettingsapi.services.GameSessionService;
 import com.playtika.gamesettingsapi.services.UserService;
+import com.playtika.gamesettingsapi.services.servicefactory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.Authenticator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +36,9 @@ public class UserController {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    ServiceFactory serviceFactory;
 
 
     @GetMapping
@@ -70,21 +71,42 @@ public class UserController {
     }
 
     @PostMapping(value = "/create")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth){
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth) {
         try {
-            GameSessionDTO gameSessionDTO1 = new GameSessionDTO();
-            gameSessionDTO1.setUserName(auth.getName());
-            gameSessionDTO1.setGameName(gameSessionDTO.getGameName());
-            gameSessionDTO1.setDuration(gameSessionDTO.getDuration());
-            gameSessionDTO1.setStartTime(gameSessionDTO.getStartTime());
-            GameSession gameSession = gameSessionService.createGameSession(gameSessionDTO1);
-            return new ResponseEntity<>(gameSession,HttpStatus.OK);
+            gameSessionDTO.setUserName(auth.getName());
+            GameSession gameSession = gameSessionService.createGameSession(gameSessionDTO);
+            return new ResponseEntity<>(gameSession, HttpStatus.OK);
         } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
-            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
+    @GetMapping(value = "/records")
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<List<GameSession>> readGameSessions(Authentication auth) {
+        User user = userService.getUser(auth.getName());
+        List<GameSession> gameSessions = serviceFactory.createService(user.getRoles()).getGameSessions(user);
+        if (gameSessions != null) {
+            return new ResponseEntity<>(gameSessions, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "/records/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<GameSession> updateGameSession(@PathVariable long id, @RequestBody GameSessionDTO gameSessionDTO, Authentication auth) throws InterruptedException, ExecutionException, JsonProcessingException {
+        User user = userService.getUser(auth.getName());
+        gameSessionDTO.setUserName(auth.getName());
+        gameSessionDTO.setId(id);
+
+        return new ResponseEntity<>(serviceFactory.createService(user.getRoles()).updateGameSession(gameSessionDTO), HttpStatus.OK);
+
+
+    }
+
 
     @DeleteMapping(value = "/delete")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -120,5 +142,11 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
     public String refreshToken(HttpServletRequest req) {
         return userService.refreshToken(req.getRemoteUser());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
+    public ResponseEntity<String> handleException(Exception e) {
+        return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

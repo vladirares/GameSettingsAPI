@@ -8,6 +8,7 @@ public class GameSessionDTO {
     private int duration;
     private boolean isTimeExceeded;
     private Date startTime;
+    private long id;
 
     public GameSessionDTO(String gameName, int duration, boolean isTimeExceeded, Date startTime) {
         this.gameName = gameName;
@@ -18,6 +19,14 @@ public class GameSessionDTO {
 
     public GameSessionDTO(){
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUserName() {

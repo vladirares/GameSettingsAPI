@@ -1,5 +1,7 @@
 package com.playtika.gamesettingsapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Game {
     @Column(name = "game_name",unique = true)
     private String name;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "game",
             cascade = CascadeType.ALL,
@@ -37,14 +40,6 @@ public class Game {
     }
 
     public void setGameSessions(List<GameSession> gameSessions) {
-        this.gameSessions = gameSessions;
-    }
-
-    public List<GameSession> getUsers() {
-        return gameSessions;
-    }
-
-    public void setUsers(List<GameSession> gameSessions) {
         this.gameSessions = gameSessions;
     }
 

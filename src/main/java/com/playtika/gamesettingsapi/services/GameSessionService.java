@@ -34,4 +34,17 @@ public class GameSessionService {
         return gameSessionRepository.saveAndFlush(gameSession);
     }
 
+    public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
+        GameSession gameSession = gameSessionRepository.getById(gameSessionDTO.getId());
+        Game game = gameService.createGame(gameSessionDTO.getGameName());
+        if(game!= null){
+            gameSession.setGame(game);
+        }else{
+            throw new IllegalArgumentException();
+        }
+        gameSession.setDuration(gameSessionDTO.getDuration());
+        gameSession.setStartTime(gameSessionDTO.getStartTime());
+        return gameSessionRepository.saveAndFlush(gameSession);
+    }
+
 }

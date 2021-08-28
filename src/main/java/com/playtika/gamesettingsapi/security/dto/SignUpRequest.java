@@ -8,7 +8,7 @@ public class SignUpRequest {
     private String userName;
     private String email;
     private String password;
-    private List<Role> roles;
+//    private List<Role> roles;
 
     public String getUserName() {
         return userName;
@@ -34,11 +34,11 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
+//    public List<Role> getRoles() {
+//        return roles;
+//    }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
+//    public void setRoles(List<Role> roles) {
+//        this.roles = roles;
+//    }
 }
