@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserCRUD {
     List<User> getAllUsers();
     User createUser(UserCRUDDTO userDTO);
+    User updateUser(UserCRUDDTO userDTO);
+    boolean deleteUser(long id);
 }

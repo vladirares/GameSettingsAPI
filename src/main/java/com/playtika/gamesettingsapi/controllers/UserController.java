@@ -80,16 +80,20 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PutMapping(value = "/users/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<User> updateUser(@RequestBody UserCRUDDTO userDTO, Authentication auth) {
+        User userCaller = userService.getUser(auth.getName());
+        User result = userCRUDFactory.createService(userCaller.getRoles()).updateUser(userDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @DeleteMapping(value = "/users/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteUser(@RequestParam String userName) throws RuntimeException {
-        try {
-            userService.removeUser(userName);
-        } catch (Exception e) {
-            throw e;
-        }
-        return new ResponseEntity<>(userName, HttpStatus.OK);
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<Boolean> deleteUser(@PathVariable long id, Authentication auth) throws RuntimeException {
+        User userCaller = userService.getUser(auth.getName());
+        boolean result = userCRUDFactory.createService(userCaller.getRoles()).deleteUser(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value = "/search")

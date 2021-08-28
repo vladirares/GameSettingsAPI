@@ -65,16 +65,15 @@ public class AdminService extends ManagerService{
     @Override
     public User createUser(UserCRUDDTO userDTO) {
         User userToCreate = new User();
-        userToCreate.setEmail(userDTO.getEmail());
-        userToCreate.setUsername(userDTO.getUsername());
-        userToCreate.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-        List<Role> userRoles = new ArrayList<>();
-        for(Role role : userDTO.getRoles()){
-            userRoles.add(roleRepository.findByName(role.getName()));
-        }
-        userToCreate.setRoles(userRoles);
+        updateUserWithDTO(userToCreate,userDTO);
         return userService.createUser(userToCreate);
+    }
+
+    @Override
+    public User updateUser(UserCRUDDTO userDTO) {
+        User user = userRepository.findById(userDTO.getId()).get();
+        updateUserWithDTO(user,userDTO);
+        return userRepository.saveAndFlush(user);
     }
 
 }
