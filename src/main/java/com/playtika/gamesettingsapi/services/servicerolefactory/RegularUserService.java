@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class RegularUserService implements RoleService{
+public class RegularUserService implements GameSessionCRUD {
 
     @Autowired
     GameSessionService gameSessionService;

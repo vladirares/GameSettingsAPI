@@ -22,7 +22,7 @@ public class GameSessionService {
     UserService userService;
 
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws JsonProcessingException, ExecutionException, InterruptedException {
-        Game game = gameService.createGame(gameSessionDTO.getGameName());
+        Game game = gameService.createOrGetExistingGame(gameSessionDTO.getGameName());
         User user = userService.getUser(gameSessionDTO.getUserName());
         GameSession gameSession = new GameSession();
         gameSession.setGame(game);
@@ -34,7 +34,7 @@ public class GameSessionService {
 
     public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         GameSession gameSession = gameSessionRepository.getById(gameSessionDTO.getId());
-        Game game = gameService.createGame(gameSessionDTO.getGameName());
+        Game game = gameService.createOrGetExistingGame(gameSessionDTO.getGameName());
         if (game != null) {
             gameSession.setGame(game);
         } else {

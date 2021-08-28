@@ -107,6 +107,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User createUser(User user){
+        if(userRepository.existsByUsername(user.getUsername())){
+            throw new MyCustomException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        return userRepository.saveAndFlush(user);
+    }
+
     public void removeUser(String userName) {
         if(!userRepository.existsByUsername(userName)){
             throw new RuntimeException("User doesn't exists");

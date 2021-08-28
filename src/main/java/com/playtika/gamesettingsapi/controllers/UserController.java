@@ -1,18 +1,16 @@
 package com.playtika.gamesettingsapi.controllers;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.playtika.gamesettingsapi.dto.GameSessionDTO;
-import com.playtika.gamesettingsapi.models.GameSession;
+import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.security.dto.LoginRequest;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
 import com.playtika.gamesettingsapi.security.dto.UserDTO;
-import com.playtika.gamesettingsapi.services.GameService;
-import com.playtika.gamesettingsapi.services.GameSessionService;
 import com.playtika.gamesettingsapi.services.UserService;
-import com.playtika.gamesettingsapi.services.servicerolefactory.ServiceFactory;
+import com.playtika.gamesettingsapi.services.servicerolefactory.ManagerService;
+import com.playtika.gamesettingsapi.services.servicerolefactory.UserCRUD;
+import com.playtika.gamesettingsapi.services.servicerolefactory.UserCRUDFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api")
@@ -32,13 +29,10 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    GameSessionService gameSessionService;
+    ManagerService managerService;
 
     @Autowired
-    GameService gameService;
-
-    @Autowired
-    ServiceFactory serviceFactory;
+    UserCRUDFactory userCRUDFactory;
 
 
     @GetMapping
@@ -70,52 +64,22 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/create")
-    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSessionDTO gameSessionDTO, Authentication auth) {
-        try {
-            User user = userService.getUser(auth.getName());
-            gameSessionDTO.setUser(user);
-            GameSession gameSession = serviceFactory.createService(user.getRoles()).createGameSession(gameSessionDTO);
-            return new ResponseEntity<>(gameSession, HttpStatus.OK);
-        } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @GetMapping(value = "/records")
-    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<List<GameSession>> readGameSessions(Authentication auth) {
+    @GetMapping(value = "/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<List<User>> getAllUsers(Authentication auth) {
         User user = userService.getUser(auth.getName());
-        List<GameSession> gameSessions = serviceFactory.createService(user.getRoles()).getGameSessions(user);
-        if (gameSessions != null) {
-            return new ResponseEntity<>(gameSessions, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/records/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<GameSession> updateGameSession(@PathVariable long id, @RequestBody GameSessionDTO gameSessionDTO, Authentication auth) throws InterruptedException, ExecutionException, JsonProcessingException {
-        User user = userService.getUser(auth.getName());
-        gameSessionDTO.setUser(user);
-        gameSessionDTO.setId(id);
-        return new ResponseEntity<>(serviceFactory.createService(user.getRoles()).updateGameSession(gameSessionDTO), HttpStatus.OK);
-
+    @PostMapping(value = "/users/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<User> createUser(@RequestBody UserCRUDDTO userDTO, Authentication auth) {
+        User userCaller = userService.getUser(auth.getName());
+        User result = userCRUDFactory.createService(userCaller.getRoles()).createUser(userDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/records/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<Boolean> deleteGameSession(@PathVariable long id, Authentication auth) throws RuntimeException {
-        GameSessionDTO gameSessionDTO = new GameSessionDTO();
-        User user = userService.getUser(auth.getName());
-        gameSessionDTO.setUser(user);
-        gameSessionDTO.setId(id);
-        boolean response = serviceFactory.createService(user.getRoles()).deleteGameSession(gameSessionDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     @DeleteMapping(value = "/users/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -126,17 +90,6 @@ public class UserController {
             throw e;
         }
         return new ResponseEntity<>(userName, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<User>> getAllUser() throws RuntimeException {
-        try {
-            return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
-        } catch (Exception e) {
-            throw e;
-        }
-
     }
 
     @GetMapping(value = "/search")

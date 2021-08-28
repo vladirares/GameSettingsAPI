@@ -65,7 +65,7 @@ public class GameService {
         return false;
     }
 
-    public Game createGame(String name) throws JsonProcessingException, ExecutionException, InterruptedException {
+    public Game createOrGetExistingGame(String name) throws JsonProcessingException, ExecutionException, InterruptedException {
         Game gamesWithName = gameRepository.findGameByName(name);
         if(gamesWithName != null){
             return gamesWithName;

@@ -1,5 +1,7 @@
 package com.playtika.gamesettingsapi.security.dto;
 
+import java.util.Arrays;
+
 public class UserDTO {
     private String userName;
     private String email;
@@ -28,4 +30,5 @@ public class UserDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }
