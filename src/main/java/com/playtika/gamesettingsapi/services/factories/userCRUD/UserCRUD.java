@@ -1,10 +1,7 @@
-package com.playtika.gamesettingsapi.services.servicerolefactory;
+package com.playtika.gamesettingsapi.services.factories.userCRUD;
 
 import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.User;
-import com.playtika.gamesettingsapi.security.dto.UserDTO;
-import com.playtika.gamesettingsapi.security.models.Role;
-import com.playtika.gamesettingsapi.security.models.RoleType;
 
 import java.util.List;
 

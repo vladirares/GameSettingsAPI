@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.services.servicerolefactory;
+package com.playtika.gamesettingsapi.services.factories.gamesessionCRUD;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;

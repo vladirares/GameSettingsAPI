@@ -1,10 +1,11 @@
-package com.playtika.gamesettingsapi.services.servicerolefactory;
+package com.playtika.gamesettingsapi.services.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.services.GameSessionService;
+import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

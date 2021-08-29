@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.services.servicerolefactory;
+package com.playtika.gamesettingsapi.services.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
@@ -6,7 +6,6 @@ import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.GameSessionRepository;
-import com.playtika.gamesettingsapi.security.models.Role;
 import com.playtika.gamesettingsapi.security.models.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,20 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService extends ManagerService{
 
     @Autowired
-    ManagerService managerService;
-
-    @Autowired
     GameSessionRepository gameSessionRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Override
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {

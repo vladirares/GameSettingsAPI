@@ -5,7 +5,7 @@ import com.playtika.gamesettingsapi.dto.GameSessionDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.services.UserService;
-import com.playtika.gamesettingsapi.services.servicerolefactory.GameSessionCRUDFactory;
+import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUDFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
