@@ -11,6 +11,8 @@ import com.playtika.gamesettingsapi.services.UserService;
 import com.playtika.gamesettingsapi.services.factories.ManagerService;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUDFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,9 +67,14 @@ public class UserController {
 
     @GetMapping(value = "/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<List<User>> getAllUsers(Authentication auth) {
+    public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) Integer page,
+                                                  @RequestParam(required = false) Integer size,
+                                                  Authentication auth) {
+        page = page == null ? 1 : page;
+        size = size == null ? 3 : size;
+        Pageable pageable = PageRequest.of(page,size);
         User user = userService.getUser(auth.getName());
-        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers();
+        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

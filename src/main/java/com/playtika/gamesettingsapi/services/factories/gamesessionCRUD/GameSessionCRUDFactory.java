@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameSessionCRUDFactory {
-    GameSessionCRUD gameSessionCRUD;
 
     @Autowired
     AdminService adminService;

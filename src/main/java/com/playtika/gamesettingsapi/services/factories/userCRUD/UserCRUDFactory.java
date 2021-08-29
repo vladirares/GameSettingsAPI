@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserCRUDFactory {
-    UserCRUD userCRUD;
 
     @Autowired
     AdminService adminService;

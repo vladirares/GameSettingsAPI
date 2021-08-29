@@ -14,6 +14,7 @@ import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessi
 import com.playtika.gamesettingsapi.services.factories.userCRUD.DefaultUserCRUD;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,10 +59,8 @@ public class AdminService implements UserCRUD, GameSessionCRUD {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> users = defaultUserCRUD.getAllUsers();
-        users.addAll(userRepository.findByRoles(RoleType.ROLE_ADMIN.name()));
-        return users;
+    public List<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAllUsers(pageable);
     }
 
     @Override
