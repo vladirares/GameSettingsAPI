@@ -23,19 +23,11 @@ public class ManagerService extends RegularUserService implements UserCRUD {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    UserService userService;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    DefaultUserCRUD defaultUserCRUD;
 
     @Override
     public List<User> getAllUsers(){
-        List<User> users = new ArrayList<>();
-        users.addAll(userRepository.findByRoles(RoleType.ROLE_USER.name()));
-        users.addAll(userRepository.findByRoles(RoleType.ROLE_MANAGER.name()));
-
-        return users;
+        return defaultUserCRUD.getAllUsers();
     }
 
     @Override
@@ -43,9 +35,7 @@ public class ManagerService extends RegularUserService implements UserCRUD {
         if(hasIllegalRole(userDTO)){
             throw new IllegalArgumentException();
         }
-        User userToCreate = new User();
-        updateUserWithDTO(userToCreate,userDTO);
-        return userService.createUser(userToCreate);
+        return defaultUserCRUD.createUser(userDTO);
     }
 
     @Override
@@ -53,12 +43,7 @@ public class ManagerService extends RegularUserService implements UserCRUD {
         if(hasIllegalRole(userDTO)){
             throw new IllegalArgumentException();
         }
-        User user = userRepository.findById(userDTO.getId()).get();
-        if(userRepository.existsByUsername(userDTO.getUsername()) && !user.getUsername().equals(userDTO.getUsername())){
-            throw new IllegalArgumentException();
-        }
-        updateUserWithDTO(user,userDTO);
-        return userRepository.saveAndFlush(user);
+       return defaultUserCRUD.updateUser(userDTO);
     }
 
     @Override
@@ -68,8 +53,7 @@ public class ManagerService extends RegularUserService implements UserCRUD {
             if(user.getRoles().stream().map(Role::getName).anyMatch(x->x.equals("ROLE_ADMIN"))){
                 throw new IllegalArgumentException();
             }
-            userRepository.delete(user);
-            return true;
+            return defaultUserCRUD.deleteUser(id);
         }
         return false;
     }
@@ -79,34 +63,5 @@ public class ManagerService extends RegularUserService implements UserCRUD {
         roles.addAll(userDTO.getRoles().stream().map(Role::getName).map(RoleType::valueOf).collect(Collectors.toList()));
         return roles.contains(RoleType.ROLE_ADMIN);
     }
-
-    protected void updateUserWithDTO(User user,UserCRUDDTO userDTO){
-
-        if(userDTO.getPassword()!=null){
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        }
-        if(userDTO.getUsername()!=null){
-            user.setUsername(userDTO.getUsername());
-        }
-        if(userDTO.getFirstName()!=null){
-            user.setFirstName(userDTO.getFirstName());
-        }
-        if(userDTO.getLastName()!=null){
-            user.setLastName(userDTO.getLastName());
-        }
-        if(userDTO.getEmail() != null){
-            user.setEmail(userDTO.getEmail());
-        }
-        user.setMaxPlaytime(userDTO.getMaxPlaytime());
-        if(userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()){
-            List<Role> userRoles = new ArrayList<>();
-            for(Role role : userDTO.getRoles()){
-                userRoles.add(roleRepository.findByName(role.getName()));
-            }
-            user.setRoles(userRoles);
-        }
-
-    }
-
 
 }

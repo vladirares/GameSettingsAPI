@@ -5,6 +5,7 @@ import com.playtika.gamesettingsapi.dto.GameSessionDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.services.GameSessionService;
+import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.DefaultGameSessionCRUD;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,13 @@ public class RegularUserService implements GameSessionCRUD {
 
     @Autowired
     GameSessionService gameSessionService;
+    @Autowired
+    DefaultGameSessionCRUD defaultGameSessionCRUD;
 
     @Override
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         gameSessionDTO.setUserName(gameSessionDTO.getUser().getUsername());
-        return  gameSessionService.createGameSession(gameSessionDTO);
+        return  defaultGameSessionCRUD.createGameSession(gameSessionDTO);
     }
 
     @Override
@@ -32,12 +35,12 @@ public class RegularUserService implements GameSessionCRUD {
         if(idNotValid){
             throw new IllegalArgumentException();
         }
-        return gameSessionService.updateGameSession(gameSessionDTO);
+        return defaultGameSessionCRUD.updateGameSession(gameSessionDTO);
     }
 
     @Override
     public List<GameSession> getGameSessions(User user) {
-        return user.getGameSessions();
+        return defaultGameSessionCRUD.getGameSessions(user);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class RegularUserService implements GameSessionCRUD {
         if(idNotValid){
             return false;
         }
-        return gameSessionService.deleteGameSession(gameSessionDTO.getId());
+        return defaultGameSessionCRUD.deleteGameSession(gameSessionDTO);
     }
 
 }

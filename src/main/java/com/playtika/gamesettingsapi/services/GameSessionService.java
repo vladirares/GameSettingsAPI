@@ -40,9 +40,13 @@ public class GameSessionService {
         } else {
             throw new IllegalArgumentException();
         }
-        gameSession.setUser(userService.getUser(gameSessionDTO.getUserName()));
+        if (gameSessionDTO.getUserName() != null) {
+            gameSession.setUser(userService.getUser(gameSessionDTO.getUserName()));
+        }
+        if (gameSessionDTO.getStartTime() != null){
+            gameSession.setStartTime(gameSessionDTO.getStartTime());
+        }
         gameSession.setDuration(gameSessionDTO.getDuration());
-        gameSession.setStartTime(gameSessionDTO.getStartTime());
         return gameSessionRepository.saveAndFlush(gameSession);
     }
 
@@ -51,7 +55,7 @@ public class GameSessionService {
     }
 
     public boolean deleteGameSession(long id) {
-        if(gameSessionRepository.findById(id).isPresent()){
+        if (gameSessionRepository.findById(id).isPresent()) {
             GameSession gameSession = gameSessionRepository.findById(id).get();
             gameSession.getUser().getGameSessions().remove(gameSession);
             gameSession.getGame().getGameSessions().remove(gameSession);
