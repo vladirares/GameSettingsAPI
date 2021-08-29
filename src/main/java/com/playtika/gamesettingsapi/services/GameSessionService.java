@@ -9,6 +9,7 @@ import com.playtika.gamesettingsapi.repositories.GameSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -29,7 +30,7 @@ public class GameSessionService {
         gameSession.setUser(user);
         gameSession.setDuration(gameSessionDTO.getDuration());
         gameSession.setStartTime(gameSessionDTO.getStartTime());
-        gameSession.setTimeExceeded(hasSurpassedMaxTime(user, gameSessionDTO.getDuration()));
+        gameSession.setTimeExceeded(hasSurpassedMaxTime(user, gameSessionDTO.getDuration(),gameSessionDTO.getStartTime()));
 
         return gameSessionRepository.saveAndFlush(gameSession);
     }
@@ -67,11 +68,11 @@ public class GameSessionService {
         return false;
     }
 
-    private boolean hasSurpassedMaxTime(User user, int time) {
+    private boolean hasSurpassedMaxTime(User user, int time, Date gameSessionStartDate) {
         if (user.getMaxPlaytime() == 0) {
             return false;
         }
-        int totalTime = gameSessionRepository.findByLastDay(user.getUsername()).stream()
+        int totalTime = gameSessionRepository.findGameSessionsByDate(user.getUsername(),gameSessionStartDate).stream()
                 .map(GameSession::getDuration)
                 .reduce(0, Integer::sum);
         totalTime += time;

@@ -6,6 +6,7 @@ import com.playtika.gamesettingsapi.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 public interface GameSessionRepository extends JpaRepository<GameSession, Long> {
@@ -14,6 +15,8 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Long> 
             "INNER JOIN users\n" +
             "\tON users.id = game_sessions.user_id\n" +
             "\tAND users.username = :userName" +
-            "\tAND game_sessions.game_session_start_time > ADDDATE(CAST(NOW() AS DATE),-1) ;",nativeQuery = true)
-    List<GameSession> findByLastDay(String userName);
+            "\tAND DATE(game_sessions.game_session_start_time) BETWEEN" +
+            " DATE(:gameSessionStartDate) AND" +
+            " ADDDATE(DATE(:gameSessionStartDate),+1);",nativeQuery = true)
+    List<GameSession> findGameSessionsByDate(String userName, Date gameSessionStartDate);
 }
