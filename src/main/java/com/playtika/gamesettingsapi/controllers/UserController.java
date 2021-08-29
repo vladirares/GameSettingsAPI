@@ -95,6 +95,16 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PutMapping(value = "/maxdailyplaytime", params = {"time"})
+    @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
+    public ResponseEntity<User> setMaxDailyPlayTime(@RequestParam int time, Authentication auth) throws RuntimeException {
+        UserCRUDDTO userCRUDDTO = new UserCRUDDTO();
+        userCRUDDTO.setUsername(auth.getName());
+        userCRUDDTO.setMaxPlaytime(time);
+        User response = userService.setMaxPlayTime(userCRUDDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/search")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
     public ResponseEntity<UserDTO> searchUser(@RequestParam String userName) throws RuntimeException {

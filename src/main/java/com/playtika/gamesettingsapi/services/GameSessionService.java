@@ -29,6 +29,8 @@ public class GameSessionService {
         gameSession.setUser(user);
         gameSession.setDuration(gameSessionDTO.getDuration());
         gameSession.setStartTime(gameSessionDTO.getStartTime());
+        gameSession.setTimeExceeded(hasSurpassedMaxTime(user, gameSessionDTO.getDuration()));
+
         return gameSessionRepository.saveAndFlush(gameSession);
     }
 
@@ -64,6 +66,14 @@ public class GameSessionService {
             return true;
         }
         return false;
+    }
+
+    private boolean hasSurpassedMaxTime(User user,int time){
+        int totalTime = gameSessionRepository.findByLastDay(user.getUsername()).stream()
+                .map(GameSession::getDuration)
+                .reduce(0,Integer::sum);
+        totalTime += time;
+        return totalTime > user.getMaxPlaytime();
     }
 
 }

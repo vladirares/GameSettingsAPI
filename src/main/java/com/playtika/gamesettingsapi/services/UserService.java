@@ -1,5 +1,6 @@
 package com.playtika.gamesettingsapi.services;
 
+import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.exceptions.MyCustomException;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
@@ -135,6 +136,12 @@ public class UserService implements UserDetailsService {
 
     public User getUser(String userName){
         return userRepository.findByUsername(userName);
+    }
+
+    public User setMaxPlayTime(UserCRUDDTO userCRUDDTO){
+        User user = userRepository.findByUsername(userCRUDDTO.getUsername());
+        user.setMaxPlaytime(userCRUDDTO.getMaxPlaytime());
+        return userRepository.saveAndFlush(user);
     }
 
     public List<User> getAllUser() {
