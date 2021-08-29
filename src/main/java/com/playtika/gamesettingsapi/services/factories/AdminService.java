@@ -14,6 +14,7 @@ import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessi
 import com.playtika.gamesettingsapi.services.factories.userCRUD.DefaultUserCRUD;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,8 +50,8 @@ public class AdminService implements UserCRUD, GameSessionCRUD {
     }
 
     @Override
-    public List<GameSession> getGameSessions(User user) {
-        return gameSessionRepository.findAll();
+    public List<GameSession> getGameSessions(User user,Pageable pageable) {
+        return gameSessionRepository.findAllGameSessions(pageable);
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.playtika.gamesettingsapi.services.GameSessionService;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.DefaultGameSessionCRUD;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,8 +41,8 @@ public class RegularUserService implements GameSessionCRUD {
     }
 
     @Override
-    public List<GameSession> getGameSessions(User user) {
-        return defaultGameSessionCRUD.getGameSessions(user);
+    public List<GameSession> getGameSessions(User user, Pageable pageable) {
+        return defaultGameSessionCRUD.getGameSessions(user,pageable);
     }
 
     @Override

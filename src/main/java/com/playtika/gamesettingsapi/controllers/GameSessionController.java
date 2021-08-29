@@ -7,6 +7,8 @@ import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.services.UserService;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUDFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,9 +50,14 @@ public class GameSessionController {
 
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('ROLE_ADMIN')" + "||hasRole('ROLE_USER')" + "||hasRole('ROLE_MANAGER')")
-    public ResponseEntity<List<GameSession>> readGameSessions(Authentication auth) {
+    public ResponseEntity<List<GameSession>> readGameSessions(@RequestParam(required = false) Integer page,
+                                                              @RequestParam(required = false) Integer size,
+                                                              Authentication auth) {
+        page = page == null ? 1 : page;
+        size = size == null ? 3 : size;
+        Pageable pageable = PageRequest.of(page,size);
         User user = userService.getUser(auth.getName());
-        List<GameSession> gameSessions = gameSessionCRUDFactory.createService(user.getRoles()).getGameSessions(user);
+        List<GameSession> gameSessions = gameSessionCRUDFactory.createService(user.getRoles()).getGameSessions(user,pageable);
         if (gameSessions != null) {
             return new ResponseEntity<>(gameSessions, HttpStatus.OK);
         } else {
