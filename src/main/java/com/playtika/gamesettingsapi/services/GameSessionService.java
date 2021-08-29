@@ -45,7 +45,7 @@ public class GameSessionService {
         if (gameSessionDTO.getUserName() != null) {
             gameSession.setUser(userService.getUser(gameSessionDTO.getUserName()));
         }
-        if (gameSessionDTO.getStartTime() != null){
+        if (gameSessionDTO.getStartTime() != null) {
             gameSession.setStartTime(gameSessionDTO.getStartTime());
         }
         gameSession.setDuration(gameSessionDTO.getDuration());
@@ -62,16 +62,18 @@ public class GameSessionService {
             gameSession.getUser().getGameSessions().remove(gameSession);
             gameSession.getGame().getGameSessions().remove(gameSession);
             gameSessionRepository.deleteById(id);
-//            gameSessionRepository.flush();
             return true;
         }
         return false;
     }
 
-    private boolean hasSurpassedMaxTime(User user,int time){
+    private boolean hasSurpassedMaxTime(User user, int time) {
+        if (user.getMaxPlaytime() == 0) {
+            return false;
+        }
         int totalTime = gameSessionRepository.findByLastDay(user.getUsername()).stream()
                 .map(GameSession::getDuration)
-                .reduce(0,Integer::sum);
+                .reduce(0, Integer::sum);
         totalTime += time;
         return totalTime > user.getMaxPlaytime();
     }

@@ -33,7 +33,13 @@ public class GameSessionController {
             User user = userService.getUser(auth.getName());
             gameSessionDTO.setUser(user);
             GameSession gameSession = gameSessionCRUDFactory.createService(user.getRoles()).createGameSession(gameSessionDTO);
-            return new ResponseEntity<>(gameSession, HttpStatus.OK);
+            HttpStatus status;
+            if(gameSession.isTimeExceeded()){
+                status = HttpStatus.I_AM_A_TEAPOT;
+            }else{
+                status = HttpStatus.OK;
+            }
+            return new ResponseEntity<>(gameSession, status);
         } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
