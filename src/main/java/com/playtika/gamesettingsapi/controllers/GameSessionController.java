@@ -53,7 +53,7 @@ public class GameSessionController {
     public ResponseEntity<List<GameSession>> readGameSessions(@RequestParam(required = false) Integer page,
                                                               @RequestParam(required = false) Integer size,
                                                               Authentication auth) {
-        page = page == null ? 1 : page;
+        page = page == null ? 0 : page;
         size = size == null ? 3 : size;
         Pageable pageable = PageRequest.of(page,size);
         User user = userService.getUser(auth.getName());
