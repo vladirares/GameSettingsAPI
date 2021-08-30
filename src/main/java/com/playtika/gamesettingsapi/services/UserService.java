@@ -1,7 +1,7 @@
 package com.playtika.gamesettingsapi.services;
 
 import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
-import com.playtika.gamesettingsapi.exceptions.MyCustomException;
+import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -85,14 +84,14 @@ public class UserService implements UserDetailsService {
             logger.info("Login successfully");
 
             return loginResponse;
-        } catch (AuthenticationException e) {
-            throw new MyCustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            throw new AuthenticationException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
     public User signUp(SignUpRequest request) {
         if(userRepository.existsByUsername(request.getUserName())){
-            throw new MyCustomException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         User user = new User();
@@ -110,7 +109,7 @@ public class UserService implements UserDetailsService {
 
     public User createUser(User user){
         if(userRepository.existsByUsername(user.getUsername())){
-            throw new MyCustomException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return userRepository.saveAndFlush(user);
     }
@@ -127,7 +126,7 @@ public class UserService implements UserDetailsService {
     public UserDTO searchUser(String userName) {
         User user = userRepository.findByUsername(userName);
         if (user == null) {
-            throw new MyCustomException("Provided user doesn't exist", HttpStatus.NOT_FOUND);
+            throw new AuthenticationException("Provided user doesn't exist", HttpStatus.NOT_FOUND);
         }
         UserDTO userResponse = new UserDTO(user.getUsername(), user.getEmail());
 

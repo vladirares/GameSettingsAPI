@@ -1,6 +1,6 @@
 package com.playtika.gamesettingsapi.security.config;
 
-import com.playtika.gamesettingsapi.exceptions.MyCustomException;
+import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.security.services.JwtTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Authentication auth = jwtTokenService.validateUser(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } catch (MyCustomException ex) {
+        } catch (AuthenticationException ex) {
             SecurityContextHolder.clearContext();
             httpServletResponse.sendError(ex.getHttpStatus().value(), ex.getMessage());
             return;

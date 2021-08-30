@@ -1,7 +1,7 @@
 package com.playtika.gamesettingsapi.security.services;
 
 
-import com.playtika.gamesettingsapi.exceptions.MyCustomException;
+import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.security.models.Role;
 import com.playtika.gamesettingsapi.services.UserService;
 import io.jsonwebtoken.JwtException;
@@ -79,7 +79,7 @@ public class JwtTokenService {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new MyCustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AuthenticationException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
