@@ -31,10 +31,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             "\tON roles.id = users_roles.role_id\n" +
             "\tAND (roles.name = \"ROLE_MANAGER\"OR\n" +
             "\troles.name = \"ROLE_USER\")",nativeQuery = true)
-    List<User> findUsersByManager(Pageable pageable, Specification<User> specification);
+    List<User> findUsersByManager(Pageable pageable);
 
     @Query(value = "SELECT * FROM users",nativeQuery = true)
-    List<User> findAllUsers(Pageable pageable, Specification<User> specification);
+    List<User> findAllUsers(Pageable pageable);
 
 
     boolean existsByUsername(String username);

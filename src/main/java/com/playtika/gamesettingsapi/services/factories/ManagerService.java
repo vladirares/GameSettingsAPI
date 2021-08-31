@@ -28,8 +28,8 @@ public class ManagerService extends RegularUserService implements UserCRUD {
     DefaultUserCRUD defaultUserCRUD;
 
     @Override
-    public List<User> getAllUsers(Pageable pageable, Specification<User> specification){
-        return defaultUserCRUD.getAllUsers(pageable,specification);
+    public List<User> getAllUsers(Pageable pageable){
+        return defaultUserCRUD.getAllUsers(pageable);
     }
 
     @Override

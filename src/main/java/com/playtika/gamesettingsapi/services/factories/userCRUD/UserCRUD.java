@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 public interface UserCRUD {
-    List<User> getAllUsers(Pageable pageable, Specification<User> specification);
+    List<User> getAllUsers(Pageable pageable);
     User createUser(UserCRUDDTO userDTO);
     User updateUser(UserCRUDDTO userDTO);
     boolean deleteUser(long id);

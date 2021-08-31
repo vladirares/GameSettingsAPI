@@ -13,6 +13,7 @@ import com.playtika.gamesettingsapi.services.factories.ManagerService;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUDFactory;
 import com.playtika.gamesettingsapi.specifications.UserSpecificationsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -79,6 +80,21 @@ public class UserController {
                                                   @RequestParam(required = false) Integer size,
                                                   @RequestParam(required = false) String search,
                                                   Authentication auth) {
+        page = page == null ? 0 : page;
+        size = size == null ? 3 : size;
+        Pageable pageable = PageRequest.of(page,size);
+        User user = userService.getUser(auth.getName());
+        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable);
+//        List<User> users = userRepository.findAll(spec);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/filtered/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<User>> getAllUsersFiltered(@RequestParam(required = false) Integer page,
+                                                          @RequestParam(required = false) Integer size,
+                                                          @RequestParam(required = false) String search,
+                                                          Authentication auth) {
         //////////////////////////////////
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)( eq | lt | gt )(\\w+?),");
@@ -92,9 +108,8 @@ public class UserController {
         page = page == null ? 0 : page;
         size = size == null ? 3 : size;
         Pageable pageable = PageRequest.of(page,size);
-        User user = userService.getUser(auth.getName());
-        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable,spec);
-//        List<User> users = userRepository.findAll(spec);
+        Page<User> pageData = userRepository.findAll(spec,pageable);
+        List<User> users = pageData.getContent();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

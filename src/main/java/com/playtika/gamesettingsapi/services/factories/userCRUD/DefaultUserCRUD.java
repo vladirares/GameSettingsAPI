@@ -33,9 +33,9 @@ public class DefaultUserCRUD implements UserCRUD {
     RoleRepository roleRepository;
 
     @Override
-    public List<User> getAllUsers(Pageable pageable, Specification<User> specification){
+    public List<User> getAllUsers(Pageable pageable){
         List<User> users = new ArrayList<>();
-        users.addAll(userRepository.findUsersByManager(pageable,specification ));
+        users.addAll(userRepository.findUsersByManager(pageable));
 
         return users;
     }

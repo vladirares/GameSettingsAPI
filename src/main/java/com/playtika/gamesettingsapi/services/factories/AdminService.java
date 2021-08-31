@@ -61,8 +61,8 @@ public class AdminService implements UserCRUD, GameSessionCRUD {
     }
 
     @Override
-    public List<User> getAllUsers(Pageable pageable, Specification<User> specification) {
-        return userRepository.findAllUsers(pageable, specification);
+    public List<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAllUsers(pageable);
     }
 
     @Override
