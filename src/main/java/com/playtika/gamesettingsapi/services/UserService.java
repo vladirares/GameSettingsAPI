@@ -93,6 +93,9 @@ public class UserService implements UserDetailsService {
         if(userRepository.existsByUsername(request.getUserName())){
             throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
         }
+        if(request.getPassword() == null || request.getPassword().length() < 4){
+            throw new AuthenticationException("Invalid password", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
 
         User user = new User();
         user.setUsername(request.getUserName());
@@ -110,6 +113,9 @@ public class UserService implements UserDetailsService {
     public User createUser(User user){
         if(userRepository.existsByUsername(user.getUsername())){
             throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if(user.getPassword() == null || user.getPassword().length()<4){
+            throw new AuthenticationException("Invalid password", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return userRepository.saveAndFlush(user);
     }

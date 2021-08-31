@@ -32,6 +32,9 @@ public class RegularUserService implements GameSessionCRUD {
     @Override
     public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         GameSession gameSession = gameSessionService.getGameSession(gameSessionDTO.getId());
+        if(gameSession == null){
+            throw new IllegalArgumentException();
+        }
         gameSessionDTO.setUserName(gameSessionDTO.getUser().getUsername());
         boolean idNotValid = !gameSessionDTO.getUser().getGameSessions().contains(gameSession);
         if(idNotValid){

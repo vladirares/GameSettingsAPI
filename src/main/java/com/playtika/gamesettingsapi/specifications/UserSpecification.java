@@ -19,16 +19,6 @@ public class UserSpecification implements Specification<User> {
     }
 
     @Override
-    public Specification<User> and(Specification<User> other) {
-        return Specification.super.and(other);
-    }
-
-    @Override
-    public Specification<User> or(Specification<User> other) {
-        return Specification.super.or(other);
-    }
-
-    @Override
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         if (criteria.getOperation().equalsIgnoreCase(" gt ")) {
             return builder.greaterThanOrEqualTo(
