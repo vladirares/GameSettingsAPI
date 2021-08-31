@@ -29,25 +29,18 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private JwtTokenService jwtTokenService;
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private GameSessionService gameSessionService;
-
     @Autowired
     private RoleRepository roleRepository;
-
 
     //required by the UserDetailsService
     @Override
@@ -69,7 +62,6 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-
     public LoginResponse login(String userName, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
@@ -90,10 +82,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User signUp(SignUpRequest request) {
-        if(userRepository.existsByUsername(request.getUserName())){
+        if (userRepository.existsByUsername(request.getUserName())) {
             throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if(request.getPassword() == null || request.getPassword().length() < 4){
+        if (request.getPassword() == null || request.getPassword().length() < 4) {
             throw new AuthenticationException("Invalid password", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
@@ -110,18 +102,18 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User createUser(User user){
-        if(userRepository.existsByUsername(user.getUsername())){
+    public User createUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new AuthenticationException("User already exists in system", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if(user.getPassword() == null || user.getPassword().length()<4){
+        if (user.getPassword() == null || user.getPassword().length() < 4) {
             throw new AuthenticationException("Invalid password", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return userRepository.saveAndFlush(user);
     }
 
     public void removeUser(String userName) {
-        if(!userRepository.existsByUsername(userName)){
+        if (!userRepository.existsByUsername(userName)) {
             throw new RuntimeException("User doesn't exists");
         }
         userRepository.deleteByUsername(userName);
@@ -139,11 +131,11 @@ public class UserService implements UserDetailsService {
         return userResponse;
     }
 
-    public User getUser(String userName){
+    public User getUser(String userName) {
         return userRepository.findByUsername(userName);
     }
 
-    public User setMaxPlayTime(UserCRUDDTO userCRUDDTO){
+    public User setMaxPlayTime(UserCRUDDTO userCRUDDTO) {
         User user = userRepository.findByUsername(userCRUDDTO.getUsername());
         user.setMaxPlaytime(userCRUDDTO.getMaxPlaytime());
         return userRepository.saveAndFlush(user);

@@ -7,20 +7,14 @@ import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.GameSessionRepository;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
-import com.playtika.gamesettingsapi.security.models.RoleType;
-import com.playtika.gamesettingsapi.services.GameSessionService;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.DefaultGameSessionCRUD;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUD;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.DefaultUserCRUD;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -38,11 +32,10 @@ public class AdminService implements UserCRUD, GameSessionCRUD {
 
     @Override
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
-        if(gameSessionDTO.getUserName() == null)
-        {
+        if (gameSessionDTO.getUserName() == null) {
             gameSessionDTO.setUserName(gameSessionDTO.getUser().getUsername());
         }
-        return  defaultGameSessionCRUD.createGameSession(gameSessionDTO);
+        return defaultGameSessionCRUD.createGameSession(gameSessionDTO);
     }
 
     @Override
@@ -51,7 +44,7 @@ public class AdminService implements UserCRUD, GameSessionCRUD {
     }
 
     @Override
-    public List<GameSession> getGameSessions(User user,Pageable pageable) {
+    public List<GameSession> getGameSessions(User user, Pageable pageable) {
         return gameSessionRepository.findAllGameSessions(pageable);
     }
 

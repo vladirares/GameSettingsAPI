@@ -18,8 +18,11 @@ import reactor.netty.http.client.HttpClient;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLException;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -31,7 +34,6 @@ public class GameService {
     HttpClient httpClient;
     WebClient webClient;
     private static String API_KEY;
-
     @Autowired
     GameRepository gameRepository;
 
@@ -59,17 +61,17 @@ public class GameService {
 
     public Game createOrGetExistingGame(String name) throws JsonProcessingException, ExecutionException, InterruptedException {
         Game gamesWithName = gameRepository.findGameByName(name);
-        if(gamesWithName != null){
+        if (gamesWithName != null) {
             return gamesWithName;
         }
-        if(findGame(name).get()){
+        if (findGame(name).get()) {
             return gameRepository.saveAndFlush(new Game(name));
         }
         return null;
     }
 
     @Async
-    public Future<Boolean> findGame(String gameName) throws JsonProcessingException{
+    public Future<Boolean> findGame(String gameName) throws JsonProcessingException {
 
         String params = "/games?key=" +
                 API_KEY +
@@ -87,13 +89,12 @@ public class GameService {
         boolean result = count > 0;
 
         return new AsyncResult<>(result);
-
     }
 
     private int getGameCount(String response) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(response);
-        return  jsonNode.get("count").asInt();
+        return jsonNode.get("count").asInt();
     }
 
     private String getApiSecret() throws FileNotFoundException {

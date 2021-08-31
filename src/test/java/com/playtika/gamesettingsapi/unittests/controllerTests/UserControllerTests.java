@@ -2,41 +2,29 @@ package com.playtika.gamesettingsapi.unittests.controllerTests;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.security.dto.LoginRequest;
 import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
-import com.playtika.gamesettingsapi.security.dto.UserDTO;
 import com.playtika.gamesettingsapi.security.models.Role;
 import com.playtika.gamesettingsapi.security.services.JwtTokenService;
 import com.playtika.gamesettingsapi.services.UserService;
-import com.playtika.gamesettingsapi.services.factories.AdminService;
 import com.playtika.gamesettingsapi.services.factories.ManagerService;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.UserCRUDFactory;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -50,7 +38,7 @@ public class UserControllerTests {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    private  ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @MockBean
     private UserService userService;
     @MockBean
@@ -59,7 +47,6 @@ public class UserControllerTests {
     private JwtTokenService jwtTokenService;
     @MockBean
     private ManagerService managerService;
-
 
     @BeforeEach
     private void init() {
@@ -82,7 +69,8 @@ public class UserControllerTests {
         String fullURL = "/api/login";
         when(userService.login(any(String.class), any(String.class)))
                 .thenReturn(loginResponse);
-        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(loginRequest)))
+        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userName").value(loginResponse.getUserName()));
     }
@@ -101,7 +89,8 @@ public class UserControllerTests {
         String fullURL = "/api/register";
         when(userService.signUp(any()))
                 .thenReturn(user);
-        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(signUpRequest)))
+        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signUpRequest)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("username"));
     }
@@ -122,7 +111,8 @@ public class UserControllerTests {
                 .thenReturn(managerService);
         when(managerService.createUser(any()))
                 .thenReturn(user);
-        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+        mockMvc.perform(post(fullURL).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("test"));
     }
@@ -143,7 +133,8 @@ public class UserControllerTests {
                 .thenReturn(managerService);
         when(managerService.updateUser(any()))
                 .thenReturn(user);
-        mockMvc.perform(put(fullURL).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO)))
+        mockMvc.perform(put(fullURL).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDTO)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("test"));
     }

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
-import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.security.services.JwtTokenService;
 import com.playtika.gamesettingsapi.services.UserService;
 import com.playtika.gamesettingsapi.services.factories.ManagerService;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUDFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,6 @@ public class GameSessionControllerTests {
     private JwtTokenService jwtTokenService;
     @MockBean
     private ManagerService managerService;
-
 
     @BeforeEach
     private void init() {

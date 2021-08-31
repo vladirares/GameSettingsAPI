@@ -26,10 +26,10 @@ public class User {
     @Column(name = "user_max_daily_playtime")
     private int maxPlaytime;
 
-    @Column(name = "user_email",unique = true, nullable = false)
+    @Column(name = "user_email", unique = true, nullable = false)
     private String email;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -70,7 +70,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getUsername() {
         return username;

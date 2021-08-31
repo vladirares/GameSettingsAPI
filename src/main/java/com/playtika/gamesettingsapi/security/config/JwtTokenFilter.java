@@ -15,7 +15,6 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenService jwtTokenService;
 
-
     public JwtTokenFilter(JwtTokenService jwtTokenProviderService) {
         this.jwtTokenService = jwtTokenProviderService;
     }
@@ -34,7 +33,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             httpServletResponse.sendError(ex.getHttpStatus().value(), ex.getMessage());
             return;
         }
-
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }

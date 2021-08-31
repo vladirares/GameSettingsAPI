@@ -4,6 +4,7 @@ package com.playtika.gamesettingsapi.security.services;
 import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.security.models.Role;
 import com.playtika.gamesettingsapi.services.UserService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.Claims;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,6 @@ public class JwtTokenService {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-
     public String createToken(String userName, List<Role> roles) {
         Claims claims = Jwts.claims().setSubject(userName);
         claims.put("auth", roles.stream().map(
@@ -60,7 +59,6 @@ public class JwtTokenService {
         UserDetails userDetails = userService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
-
 
     public String getUsername(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();

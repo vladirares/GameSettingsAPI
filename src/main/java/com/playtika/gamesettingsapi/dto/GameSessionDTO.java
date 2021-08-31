@@ -23,7 +23,7 @@ public class GameSessionDTO {
         this.user = user;
     }
 
-    public GameSessionDTO(){
+    public GameSessionDTO() {
 
     }
 

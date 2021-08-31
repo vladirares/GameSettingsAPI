@@ -24,7 +24,6 @@ public class GameSessionController {
 
     @Autowired
     GameSessionCRUDFactory gameSessionCRUDFactory;
-
     @Autowired
     UserService userService;
 
@@ -36,9 +35,9 @@ public class GameSessionController {
             gameSessionDTO.setUser(user);
             GameSession gameSession = gameSessionCRUDFactory.createService(user.getRoles()).createGameSession(gameSessionDTO);
             HttpStatus status;
-            if(gameSession.isTimeExceeded()){
+            if (gameSession.isTimeExceeded()) {
                 status = HttpStatus.I_AM_A_TEAPOT;
-            }else{
+            } else {
                 status = HttpStatus.OK;
             }
             return new ResponseEntity<>(gameSession, status);
@@ -55,9 +54,9 @@ public class GameSessionController {
                                                               Authentication auth) {
         page = page == null ? 0 : page;
         size = size == null ? 3 : size;
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         User user = userService.getUser(auth.getName());
-        List<GameSession> gameSessions = gameSessionCRUDFactory.createService(user.getRoles()).getGameSessions(user,pageable);
+        List<GameSession> gameSessions = gameSessionCRUDFactory.createService(user.getRoles()).getGameSessions(user, pageable);
         if (gameSessions != null) {
             return new ResponseEntity<>(gameSessions, HttpStatus.OK);
         } else {
@@ -84,6 +83,12 @@ public class GameSessionController {
         gameSessionDTO.setId(id);
         boolean response = gameSessionCRUDFactory.createService(user.getRoles()).deleteGameSession(gameSessionDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
+    public ResponseEntity<String> handleException(Exception e) {
+        return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

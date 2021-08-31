@@ -5,13 +5,12 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserSpecificationsBuilder {
     private final List<SearchCriteria> params;
 
     public UserSpecificationsBuilder() {
-        params = new ArrayList<SearchCriteria>();
+        params = new ArrayList<>();
     }
 
     public UserSpecificationsBuilder with(String key, String operation, Object value) {

@@ -9,7 +9,6 @@ import com.playtika.gamesettingsapi.security.repositories.RoleRepository;
 import com.playtika.gamesettingsapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,44 +21,38 @@ public class DefaultUserCRUD implements UserCRUD {
 
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     UserService userService;
-
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     RoleRepository roleRepository;
 
     @Override
-    public List<User> getAllUsers(Pageable pageable){
-        List<User> users = new ArrayList<>();
-        users.addAll(userRepository.findUsersByManager(pageable));
-
-        return users;
+    public List<User> getAllUsers(Pageable pageable) {
+        return new ArrayList<>(userRepository.findUsersByManager(pageable));
     }
 
     @Override
     public User createUser(UserCRUDDTO userDTO) {
         User userToCreate = new User();
-        updateUserWithDTO(userToCreate,userDTO);
+        updateUserWithDTO(userToCreate, userDTO);
         return userService.createUser(userToCreate);
     }
 
     @Override
     public User updateUser(UserCRUDDTO userDTO) {
         User user = userRepository.findById(userDTO.getId()).get();
-        if(userRepository.existsByUsername(userDTO.getUsername()) && !user.getUsername().equals(userDTO.getUsername())){
+        if (userRepository.existsByUsername(userDTO.getUsername()) && !user.getUsername().equals(userDTO.getUsername())) {
             throw new IllegalArgumentException();
         }
-        updateUserWithDTO(user,userDTO);
+        updateUserWithDTO(user, userDTO);
         return userRepository.saveAndFlush(user);
     }
 
     @Override
     public boolean deleteUser(long id) {
-        if(userRepository.findById(id).isPresent()){
+        if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
             userRepository.delete(user);
             return true;
@@ -67,34 +60,33 @@ public class DefaultUserCRUD implements UserCRUD {
         return false;
     }
 
-
-    public boolean hasIllegalRole(UserCRUDDTO userDTO){
+    public boolean hasIllegalRole(UserCRUDDTO userDTO) {
         List<RoleType> roles = new ArrayList<>();
         roles.addAll(userDTO.getRoles().stream().map(Role::getName).map(RoleType::valueOf).collect(Collectors.toList()));
         return roles.contains(RoleType.ROLE_ADMIN);
     }
 
-    public void updateUserWithDTO(User user,UserCRUDDTO userDTO){
+    public void updateUserWithDTO(User user, UserCRUDDTO userDTO) {
 
-        if(userDTO.getPassword()!=null){
+        if (userDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
-        if(userDTO.getUsername()!=null){
+        if (userDTO.getUsername() != null) {
             user.setUsername(userDTO.getUsername());
         }
-        if(userDTO.getFirstName()!=null){
+        if (userDTO.getFirstName() != null) {
             user.setFirstName(userDTO.getFirstName());
         }
-        if(userDTO.getLastName()!=null){
+        if (userDTO.getLastName() != null) {
             user.setLastName(userDTO.getLastName());
         }
-        if(userDTO.getEmail() != null){
+        if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail());
         }
         user.setMaxPlaytime(userDTO.getMaxPlaytime());
-        if(userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()){
+        if (userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()) {
             List<Role> userRoles = new ArrayList<>();
-            for(Role role : userDTO.getRoles()){
+            for (Role role : userDTO.getRoles()) {
                 userRoles.add(roleRepository.findByName(role.getName()));
             }
             user.setRoles(userRoles);

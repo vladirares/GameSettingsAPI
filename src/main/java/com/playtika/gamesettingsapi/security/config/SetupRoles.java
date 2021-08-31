@@ -20,32 +20,27 @@ import java.util.List;
 public class SetupRoles implements ApplicationListener<ContextRefreshedEvent> {
 
     boolean setupComplete = false;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        if(setupComplete)
+        if (setupComplete)
             return;
 
         // == create initial roles
         final Role adminRole = createRoleIfNotFound(RoleType.ROLE_ADMIN.name());
 
-        for(RoleType role : RoleType.values()){
+        for (RoleType role : RoleType.values()) {
             createRoleIfNotFound(role.name());
         }
-
         // == create initial user
         createUserIfNotFound("admin@test.com", "admin", "Admin",
                 "Admin", "1234", new ArrayList<>(Arrays.asList(adminRole)));
-
         setupComplete = true;
     }
 

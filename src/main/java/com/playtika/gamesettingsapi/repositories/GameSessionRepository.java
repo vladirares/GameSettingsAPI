@@ -1,7 +1,6 @@
 package com.playtika.gamesettingsapi.repositories;
 
 import com.playtika.gamesettingsapi.models.GameSession;
-import com.playtika.gamesettingsapi.models.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,17 +16,17 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Long> 
             "\tAND users.username = :userName" +
             "\tAND DATE(game_sessions.game_session_start_time) BETWEEN" +
             " DATE(:gameSessionStartDate) AND" +
-            " ADDDATE(DATE(:gameSessionStartDate),+1);",nativeQuery = true)
+            " ADDDATE(DATE(:gameSessionStartDate),+1);", nativeQuery = true)
     List<GameSession> findGameSessionsByDate(String userName, Date gameSessionStartDate);
 
     @Query(value = "SELECT *\n" +
             "FROM game_sessions\n" +
             "INNER JOIN users\n" +
             "ON users.id = game_sessions.user_id\n" +
-            "AND users.username = :userName " ,nativeQuery = true)
+            "AND users.username = :userName ", nativeQuery = true)
     List<GameSession> findGameSessionsByUserName(String userName, Pageable pageable);
 
-    @Query(value = "SELECT * FROM game_sessions",nativeQuery = true)
+    @Query(value = "SELECT * FROM game_sessions", nativeQuery = true)
     List<GameSession> findAllGameSessions(Pageable pageable);
 
 }

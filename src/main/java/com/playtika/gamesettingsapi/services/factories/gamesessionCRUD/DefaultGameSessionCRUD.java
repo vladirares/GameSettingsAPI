@@ -14,17 +14,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class DefaultGameSessionCRUD implements GameSessionCRUD{
+public class DefaultGameSessionCRUD implements GameSessionCRUD {
 
     @Autowired
     GameSessionService gameSessionService;
-
     @Autowired
     GameSessionRepository gameSessionRepository;
 
     @Override
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
-        return  gameSessionService.createGameSession(gameSessionDTO);
+        return gameSessionService.createGameSession(gameSessionDTO);
     }
 
     @Override

@@ -35,21 +35,20 @@ public class GameSessionService {
         gameSession.setDuration(gameSessionDTO.getDuration());
         gameSession.setStartTime(gameSessionDTO.getStartTime());
         List<GameSession> divided = divideGameSession(gameSession);
-        if(game == null){
+        if (game == null) {
             throw new UnsupportedOperationException();
         }
-        if(isAnyOverlapped(divided)){
+        if (isAnyOverlapped(divided)) {
             throw new UnsupportedOperationException();
         }
         GameSession exceededTime = divided.get(0);
-        for (int i = 0; i < divided.size(); i++) {
-            divided.get(i).setTimeExceeded(hasSurpassedMaxTime(user, divided.get(i).getDuration(), divided.get(i).getStartTime()));
-            if (divided.get(i).isTimeExceeded()) {
-                exceededTime = divided.get(i);
+        for (GameSession session : divided) {
+            session.setTimeExceeded(hasSurpassedMaxTime(user, session.getDuration(), session.getStartTime()));
+            if (session.isTimeExceeded()) {
+                exceededTime = session;
             }
-            gameSessionRepository.saveAndFlush(divided.get(i));
+            gameSessionRepository.saveAndFlush(session);
         }
-
         return exceededTime;
     }
 
@@ -129,19 +128,18 @@ public class GameSessionService {
         return false;
     }
 
-    private boolean isAnyOverlapped(List<GameSession> gameSessions){
+    private boolean isAnyOverlapped(List<GameSession> gameSessions) {
         boolean isOverlapped = false;
-        for(GameSession gameSession : gameSessions){
-            if(isOverlapped(gameSession)){
+        for (GameSession gameSession : gameSessions) {
+            if (isOverlapped(gameSession)) {
                 isOverlapped = true;
             }
         }
-        return  isOverlapped;
+        return isOverlapped;
     }
 
     private List<GameSession> divideGameSession(GameSession gameSession) {
         List<GameSession> gameSessions = new ArrayList<>();
-
         Date startTime = gameSession.getStartTime();
         Date endTime = addMinutesToDate(startTime, gameSession.getDuration());
 
@@ -153,7 +151,6 @@ public class GameSessionService {
                 newGameSession.setStartTime(startTime);
                 newGameSession.setDuration(getDifferenceMinutes(removeTime(addDayToDate(startTime)), startTime));
                 gameSessions.add(newGameSession);
-
                 startTime = removeTime(addDayToDate(startTime));
                 endTime = addMinutesToDate(startTime,
                         gameSession.getDuration() - gameSessions.stream().map(GameSession::getDuration)
@@ -172,7 +169,6 @@ public class GameSessionService {
         }
 
         return gameSessions;
-
     }
 
     private Date removeTime(Date date) {

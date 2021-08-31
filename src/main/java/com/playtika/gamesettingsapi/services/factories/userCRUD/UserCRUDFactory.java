@@ -19,10 +19,10 @@ public class UserCRUDFactory {
 
     public UserCRUD createService(List<Role> roles) {
         List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
-        if(roleNames.contains("ROLE_ADMIN")){
+        if (roleNames.contains("ROLE_ADMIN")) {
             return adminService;
         }
-        if(roleNames.contains("ROLE_MANAGER")){
+        if (roleNames.contains("ROLE_MANAGER")) {
             return managerService;
         }
         return null;

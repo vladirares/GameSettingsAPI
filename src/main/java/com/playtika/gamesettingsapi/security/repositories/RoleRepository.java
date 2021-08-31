@@ -1,4 +1,5 @@
 package com.playtika.gamesettingsapi.security.repositories;
+
 import com.playtika.gamesettingsapi.security.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 

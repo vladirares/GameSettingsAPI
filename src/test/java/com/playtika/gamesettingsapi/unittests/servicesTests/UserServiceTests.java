@@ -3,8 +3,6 @@ package com.playtika.gamesettingsapi.unittests.servicesTests;
 import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
-import com.playtika.gamesettingsapi.security.dto.LoginRequest;
-import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
 import com.playtika.gamesettingsapi.security.dto.UserDTO;
 import com.playtika.gamesettingsapi.security.models.Role;
@@ -20,15 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -38,7 +32,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTests {
 
     @BeforeClass
-    public void init(){
+    public void init() {
         userService = new UserService();
     }
 
@@ -62,8 +56,10 @@ public class UserServiceTests {
         when(userRepository.findByUsername(userName)).thenReturn(new User());
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(AuthenticationException.class);
-        when(jwtTokenService.createToken(userName,new ArrayList<Role>())).thenReturn("ok");
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.login(userName,password);});
+        when(jwtTokenService.createToken(userName, new ArrayList<>())).thenReturn("ok");
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.login(userName, password);
+        });
     }
 
     @Test
@@ -74,7 +70,9 @@ public class UserServiceTests {
         signUpRequest.setUserName(userName);
         signUpRequest.setPassword(password);
         when(userRepository.existsByUsername(userName)).thenReturn(true);
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.signUp(signUpRequest);});
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.signUp(signUpRequest);
+        });
     }
 
     @Test
@@ -91,7 +89,7 @@ public class UserServiceTests {
         when(userRepository.save(any())).thenReturn(user);
         when(roleRepository.findByName(RoleType.ROLE_USER.name())).thenReturn(new Role());
         when(passwordEncoder.encode(any())).thenReturn("1234");
-        Assertions.assertEquals(userService.signUp(signUpRequest).getUsername(),userName);
+        Assertions.assertEquals(userService.signUp(signUpRequest).getUsername(), userName);
     }
 
     @Test
@@ -102,7 +100,9 @@ public class UserServiceTests {
         user.setUsername(userName);
         user.setPassword(password);
         when(userRepository.existsByUsername(userName)).thenReturn(true);
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.createUser(user);});
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.createUser(user);
+        });
     }
 
     @Test
@@ -114,7 +114,9 @@ public class UserServiceTests {
         user.setPassword(password);
         when(userRepository.existsByUsername(userName)).thenReturn(false);
         when(userRepository.saveAndFlush(any())).thenReturn(false);
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.createUser(user);});
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.createUser(user);
+        });
     }
 
     @Test
@@ -124,7 +126,7 @@ public class UserServiceTests {
         user.setUsername(userName);
         when(userRepository.findByUsername(userName)).thenReturn(user);
         UserDTO userDTO = userService.searchUser(userName);
-        Assertions.assertEquals(userDTO.getUserName(),user.getUsername());
+        Assertions.assertEquals(userDTO.getUserName(), user.getUsername());
     }
 
     @Test
@@ -133,16 +135,20 @@ public class UserServiceTests {
         User user = new User();
         user.setUsername(userName);
         when(userRepository.findByUsername(userName)).thenReturn(null);
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.searchUser(userName);});
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.searchUser(userName);
+        });
     }
 
     @Test
-    public void setMaxPlayTimeTest(){
+    public void setMaxPlayTimeTest() {
         String userName = "InvalidUsername";
         User user = new User();
         user.setUsername(userName);
         when(userRepository.findByUsername(userName)).thenReturn(null);
-        Assertions.assertThrows(AuthenticationException.class,()->{userService.searchUser(userName);});
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            userService.searchUser(userName);
+        });
     }
 
 

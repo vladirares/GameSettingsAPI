@@ -1,6 +1,5 @@
 package com.playtika.gamesettingsapi.controllers;
 
-
 import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.User;
 import com.playtika.gamesettingsapi.repositories.UserRepository;
@@ -34,16 +33,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
     @Autowired
     ManagerService managerService;
-
     @Autowired
     UserCRUDFactory userCRUDFactory;
-
     @Autowired
     UserRepository userRepository;
-
 
     @GetMapping
     @RequestMapping("/login")
@@ -82,10 +77,9 @@ public class UserController {
                                                   Authentication auth) {
         page = page == null ? 0 : page;
         size = size == null ? 3 : size;
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         User user = userService.getUser(auth.getName());
         List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable);
-//        List<User> users = userRepository.findAll(spec);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -95,20 +89,20 @@ public class UserController {
                                                           @RequestParam(required = false) Integer size,
                                                           @RequestParam(required = false) String search,
                                                           Authentication auth) {
-        //////////////////////////////////
+
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)( eq | lt | gt )(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
+
         while (matcher.find()) {
             builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
         }
 
         Specification<User> spec = builder.build();
-        //////////////////////////////////
         page = page == null ? 0 : page;
         size = size == null ? 3 : size;
-        Pageable pageable = PageRequest.of(page,size);
-        Page<User> pageData = userRepository.findAll(spec,pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> pageData = userRepository.findAll(spec, pageable);
         List<User> users = pageData.getContent();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
@@ -161,10 +155,10 @@ public class UserController {
         return userService.refreshToken(req.getRemoteUser());
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
-//    public ResponseEntity<String> handleException(Exception e) {
-//        return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
+    public ResponseEntity<String> handleException(Exception e) {
+        return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }

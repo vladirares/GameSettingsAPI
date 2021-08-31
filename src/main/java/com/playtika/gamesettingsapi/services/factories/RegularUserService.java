@@ -9,7 +9,6 @@ import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.DefaultGa
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.GameSessionCRUD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,18 +25,18 @@ public class RegularUserService implements GameSessionCRUD {
     @Override
     public GameSession createGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         gameSessionDTO.setUserName(gameSessionDTO.getUser().getUsername());
-        return  defaultGameSessionCRUD.createGameSession(gameSessionDTO);
+        return defaultGameSessionCRUD.createGameSession(gameSessionDTO);
     }
 
     @Override
     public GameSession updateGameSession(GameSessionDTO gameSessionDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
         GameSession gameSession = gameSessionService.getGameSession(gameSessionDTO.getId());
-        if(gameSession == null){
+        if (gameSession == null) {
             throw new IllegalArgumentException();
         }
         gameSessionDTO.setUserName(gameSessionDTO.getUser().getUsername());
         boolean idNotValid = !gameSessionDTO.getUser().getGameSessions().contains(gameSession);
-        if(idNotValid){
+        if (idNotValid) {
             throw new IllegalArgumentException();
         }
         return defaultGameSessionCRUD.updateGameSession(gameSessionDTO);
@@ -45,14 +44,14 @@ public class RegularUserService implements GameSessionCRUD {
 
     @Override
     public List<GameSession> getGameSessions(User user, Pageable pageable) {
-        return defaultGameSessionCRUD.getGameSessions(user,pageable);
+        return defaultGameSessionCRUD.getGameSessions(user, pageable);
     }
 
     @Override
     public boolean deleteGameSession(GameSessionDTO gameSessionDTO) {
         GameSession gameSession = gameSessionService.getGameSession(gameSessionDTO.getId());
         boolean idNotValid = !gameSessionDTO.getUser().getGameSessions().contains(gameSession);
-        if(idNotValid){
+        if (idNotValid) {
             return false;
         }
         return defaultGameSessionCRUD.deleteGameSession(gameSessionDTO);

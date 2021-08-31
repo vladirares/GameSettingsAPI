@@ -1,8 +1,6 @@
 package com.playtika.gamesettingsapi.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -17,11 +15,11 @@ public class GameSession {
     private long id;
 
     @ManyToOne()
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne()
-    @JoinColumn(name="game_id")
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @Column(name = "game_session_start_time")

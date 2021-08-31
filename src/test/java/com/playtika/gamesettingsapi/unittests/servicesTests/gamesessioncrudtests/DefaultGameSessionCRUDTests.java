@@ -2,14 +2,9 @@ package com.playtika.gamesettingsapi.unittests.servicesTests.gamesessioncrudtest
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
-import com.playtika.gamesettingsapi.dto.UserCRUDDTO;
 import com.playtika.gamesettingsapi.models.GameSession;
 import com.playtika.gamesettingsapi.models.User;
-import com.playtika.gamesettingsapi.repositories.UserRepository;
-import com.playtika.gamesettingsapi.security.models.Role;
-import com.playtika.gamesettingsapi.security.repositories.RoleRepository;
 import com.playtika.gamesettingsapi.services.GameSessionService;
-import com.playtika.gamesettingsapi.services.UserService;
 import com.playtika.gamesettingsapi.services.factories.RegularUserService;
 import com.playtika.gamesettingsapi.services.factories.gamesessionCRUD.DefaultGameSessionCRUD;
 import com.playtika.gamesettingsapi.services.factories.userCRUD.DefaultUserCRUD;
@@ -21,10 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,14 +33,6 @@ public class DefaultGameSessionCRUDTests {
     }
 
     @Mock
-    UserRepository userRepository;
-    @Mock
-    UserService userService;
-    @Mock
-    PasswordEncoder passwordEncoder;
-    @Mock
-    RoleRepository roleRepository;
-    @Mock
     GameSessionService gameSessionService;
     @Mock
     DefaultGameSessionCRUD defaultGameSessionCRUD;
@@ -55,7 +40,6 @@ public class DefaultGameSessionCRUDTests {
     DefaultUserCRUD defaultUserCrud;
     @InjectMocks
     RegularUserService regularUserService;
-
 
     @Test
     public void updateGameSessionTestRegularUserWrongId() {
@@ -86,10 +70,7 @@ public class DefaultGameSessionCRUDTests {
         gameSessionDTO.setUser(user);
         when(defaultGameSessionCRUD.updateGameSession(gameSessionDTO)).thenReturn(gameSession);
 
-        Assertions.assertEquals(gameSession.getId(),regularUserService.updateGameSession(gameSessionDTO).getId());
+        Assertions.assertEquals(gameSession.getId(), regularUserService.updateGameSession(gameSessionDTO).getId());
     }
-
-
-
 
 }

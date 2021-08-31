@@ -3,7 +3,6 @@ package com.playtika.gamesettingsapi.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,7 +13,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "game_name",unique = true)
+    @Column(name = "game_name", unique = true)
     private String name;
 
     @JsonIgnore
@@ -29,11 +28,9 @@ public class Game {
         this.name = name;
     }
 
-    public Game(){
+    public Game() {
 
     }
-
-
 
     public List<GameSession> getGameSessions() {
         return gameSessions;

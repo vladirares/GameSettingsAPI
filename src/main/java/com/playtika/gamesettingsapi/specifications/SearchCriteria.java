@@ -11,7 +11,7 @@ public class SearchCriteria {
         this.value = value;
     }
 
-    public boolean isOrPredicate(){
+    public boolean isOrPredicate() {
         return "OR".equals(operation);
     }
 
