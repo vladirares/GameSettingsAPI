@@ -2,6 +2,7 @@ package com.playtika.gamesettingsapi.repositories;
 
 import com.playtika.gamesettingsapi.models.User;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -30,10 +31,11 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             "\tON roles.id = users_roles.role_id\n" +
             "\tAND (roles.name = \"ROLE_MANAGER\"OR\n" +
             "\troles.name = \"ROLE_USER\")",nativeQuery = true)
-    List<User> findUsersByManager(Pageable pageable);
+    List<User> findUsersByManager(Pageable pageable, Specification<User> specification);
 
     @Query(value = "SELECT * FROM users",nativeQuery = true)
-    List<User> findAllUsers(Pageable pageable);
+    List<User> findAllUsers(Pageable pageable, Specification<User> specification);
+
 
     boolean existsByUsername(String username);
 

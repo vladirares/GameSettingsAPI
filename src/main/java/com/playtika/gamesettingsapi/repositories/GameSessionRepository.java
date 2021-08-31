@@ -1,7 +1,6 @@
 package com.playtika.gamesettingsapi.repositories;
 
 import com.playtika.gamesettingsapi.models.GameSession;
-import com.playtika.gamesettingsapi.models.GameSessionId;
 import com.playtika.gamesettingsapi.models.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

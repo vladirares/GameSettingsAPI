@@ -57,14 +57,6 @@ public class GameService {
         return game.orElse(null);
     }
 
-    public boolean deleteById(long id) {
-        if (gameRepository.findById(id).isPresent()) {
-            gameRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
     public Game createOrGetExistingGame(String name) throws JsonProcessingException, ExecutionException, InterruptedException {
         Game gamesWithName = gameRepository.findGameByName(name);
         if(gamesWithName != null){
@@ -74,15 +66,6 @@ public class GameService {
             return gameRepository.saveAndFlush(new Game(name));
         }
         return null;
-    }
-
-    public boolean updateGame(Game game) {
-        Optional<Game> existingGame = gameRepository.findById(game.getId());
-        if (existingGame.isPresent()) {
-            gameRepository.saveAndFlush(game);
-            return true;
-        }
-        return false;
     }
 
     @Async

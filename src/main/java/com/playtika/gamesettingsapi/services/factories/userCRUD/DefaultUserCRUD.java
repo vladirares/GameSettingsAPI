@@ -9,6 +9,7 @@ import com.playtika.gamesettingsapi.security.repositories.RoleRepository;
 import com.playtika.gamesettingsapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,9 @@ public class DefaultUserCRUD implements UserCRUD {
     RoleRepository roleRepository;
 
     @Override
-    public List<User> getAllUsers(Pageable pageable){
+    public List<User> getAllUsers(Pageable pageable, Specification<User> specification){
         List<User> users = new ArrayList<>();
-        users.addAll(userRepository.findUsersByManager(pageable));
+        users.addAll(userRepository.findUsersByManager(pageable,specification ));
 
         return users;
     }

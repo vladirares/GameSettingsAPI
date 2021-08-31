@@ -93,8 +93,8 @@ public class UserController {
         size = size == null ? 3 : size;
         Pageable pageable = PageRequest.of(page,size);
         User user = userService.getUser(auth.getName());
-//        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable);
-        List<User> users = userRepository.findAll(spec);
+        List<User> users = userCRUDFactory.createService(user.getRoles()).getAllUsers(pageable,spec);
+//        List<User> users = userRepository.findAll(spec);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

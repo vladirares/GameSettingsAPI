@@ -35,15 +35,19 @@ public class GameSessionService {
         gameSession.setDuration(gameSessionDTO.getDuration());
         gameSession.setStartTime(gameSessionDTO.getStartTime());
         List<GameSession> divided = divideGameSession(gameSession);
+        if(game == null){
+            throw new UnsupportedOperationException();
+        }
+        if(isAnyOverlapped(divided)){
+            throw new UnsupportedOperationException();
+        }
         GameSession exceededTime = divided.get(0);
         for (int i = 0; i < divided.size(); i++) {
             divided.get(i).setTimeExceeded(hasSurpassedMaxTime(user, divided.get(i).getDuration(), divided.get(i).getStartTime()));
             if (divided.get(i).isTimeExceeded()) {
                 exceededTime = divided.get(i);
             }
-            if (!isOverlapped(divided.get(i))){
-                gameSessionRepository.saveAndFlush(divided.get(i));
-            }
+            gameSessionRepository.saveAndFlush(divided.get(i));
         }
 
         return exceededTime;
@@ -123,6 +127,16 @@ public class GameSessionService {
             }
         }
         return false;
+    }
+
+    private boolean isAnyOverlapped(List<GameSession> gameSessions){
+        boolean isOverlapped = false;
+        for(GameSession gameSession : gameSessions){
+            if(isOverlapped(gameSession)){
+                isOverlapped = true;
+            }
+        }
+        return  isOverlapped;
     }
 
     private List<GameSession> divideGameSession(GameSession gameSession) {

@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.unittests;
+package com.playtika.gamesettingsapi.unittests.servicesTests;
 
 import com.playtika.gamesettingsapi.exceptions.AuthenticationException;
 import com.playtika.gamesettingsapi.models.User;
@@ -8,6 +8,8 @@ import com.playtika.gamesettingsapi.security.dto.LoginResponse;
 import com.playtika.gamesettingsapi.security.dto.SignUpRequest;
 import com.playtika.gamesettingsapi.security.dto.UserDTO;
 import com.playtika.gamesettingsapi.security.models.Role;
+import com.playtika.gamesettingsapi.security.models.RoleType;
+import com.playtika.gamesettingsapi.security.repositories.RoleRepository;
 import com.playtika.gamesettingsapi.security.services.JwtTokenService;
 import com.playtika.gamesettingsapi.services.UserService;
 import org.junit.BeforeClass;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -44,7 +47,11 @@ public class UserServiceTests {
     @Mock
     AuthenticationManager authenticationManager;
     @Mock
+    RoleRepository roleRepository;
+    @Mock
     JwtTokenService jwtTokenService;
+    @Mock
+    PasswordEncoder passwordEncoder;
     @InjectMocks
     UserService userService;
 
@@ -56,7 +63,6 @@ public class UserServiceTests {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(AuthenticationException.class);
         when(jwtTokenService.createToken(userName,new ArrayList<Role>())).thenReturn("ok");
-
         Assertions.assertThrows(AuthenticationException.class,()->{userService.login(userName,password);});
     }
 
@@ -68,8 +74,24 @@ public class UserServiceTests {
         signUpRequest.setUserName(userName);
         signUpRequest.setPassword(password);
         when(userRepository.existsByUsername(userName)).thenReturn(true);
-
         Assertions.assertThrows(AuthenticationException.class,()->{userService.signUp(signUpRequest);});
+    }
+
+    @Test
+    public void registerTestWithValidUserName() {
+        String userName = "ValidUsername";
+        String password = "test123";
+        User user = new User();
+        user.setUsername(userName);
+        user.setPassword(password);
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setUserName(userName);
+        signUpRequest.setPassword(password);
+        when(userRepository.existsByUsername(userName)).thenReturn(false);
+        when(userRepository.save(any())).thenReturn(user);
+        when(roleRepository.findByName(RoleType.ROLE_USER.name())).thenReturn(new Role());
+        when(passwordEncoder.encode(any())).thenReturn("1234");
+        Assertions.assertEquals(userService.signUp(signUpRequest).getUsername(),userName);
     }
 
     @Test
@@ -91,6 +113,7 @@ public class UserServiceTests {
         user.setUsername(userName);
         user.setPassword(password);
         when(userRepository.existsByUsername(userName)).thenReturn(false);
+        when(userRepository.saveAndFlush(any())).thenReturn(false);
         Assertions.assertThrows(AuthenticationException.class,()->{userService.createUser(user);});
     }
 

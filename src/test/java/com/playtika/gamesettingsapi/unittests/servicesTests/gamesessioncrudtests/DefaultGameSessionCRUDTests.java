@@ -1,4 +1,4 @@
-package com.playtika.gamesettingsapi.unittests.gamesessioncrudtests;
+package com.playtika.gamesettingsapi.unittests.servicesTests.gamesessioncrudtests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.playtika.gamesettingsapi.dto.GameSessionDTO;
